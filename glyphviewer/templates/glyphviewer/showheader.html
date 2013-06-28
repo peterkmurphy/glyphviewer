@@ -1,0 +1,64 @@
+{% if value %}
+<dl>
+{% if value.fullname %}
+<dt>Full Name</dt>
+<dd>{{ value.fullname|linebreaks }}</dd>
+{% endif %}
+{% if value.fontfamily %}
+<dt>Font Family</dt>
+<dd>{{ value.fontfamily|linebreaks }}</dd>
+{% endif %}
+{% if value.subfamily %}
+<dt>Font Subfamily</dt>
+<dd>{{ value.subfamily|linebreaks }}</dd>
+{% endif %}
+{% if value.usi %}
+<dt>Unique subfamily identification</dt>
+<dd>{{ value.usi|linebreaks }}</dd>
+{% endif %}
+{% if value.ps %}
+<dt>PostScript name</dt>
+<dd>{{ value.ps|linebreaks }}</dd>
+{% endif %}
+{% if value.version %}
+<dt>Version</dt>
+<dd>{{ value.version|linebreaks }}</dd>
+{% endif %}
+{% if value.trademark %}
+<dt>Trademark</dt>
+<dd>{{ value.trademark|linebreaks }}</dd>
+{% endif %}
+{% if value.manufac %}
+<dt>Manufacturer</dt>
+<dd>{{ value.manufac|linebreaks }}</dd>
+{% endif %}
+{% if value.designer %}
+<dt>Designer</dt>
+<dd>{{ value.designer|linebreaks }}</dd>
+{% endif %}
+{% if value.description %}
+<dt>Description</dt>
+<dd>{{ value.description|linebreaks }}</dd>
+{% endif %}
+{% if value.urlfontven %}
+<dt>Font Vendor URL</dt>
+<dd><p><a href="{{ value.urlfontven }}">{{ value.urlfontven }}</a></p></dd>
+{% endif %}
+{% if value.urlfontdes %}
+<dt>Font Designer URL</dt>
+<dd><p><a href="{{ value.urlfontdes }}">{{ value.urlfontdes }}</a></p></dd>
+{% endif %}
+{% if value.copyright %}
+<dt>Copyright</dt>
+<dd>{{ value.copyright|linebreaks }}</dd>
+{% endif %}
+{% if value.descrip %}
+<dt>Legal use information</dt>
+<dd>{{ value.descrip|linebreaks }}</dd>
+{% endif %}
+{% if value.licenseurl %}
+<dt>License URL</dt>
+<dd><p><a href="{{ value.licenseurl }}">{{ value.licenseurl }}</a></p></dd>
+{% endif %}
+</dl>
+{% endif %}

@@ -1,0 +1,3 @@
+include *.txt 
+recursive-include glyphviewer/templates/glyphviewer *
+recursive-include glyphviewer/static/glyphviewer *
