@@ -55,14 +55,13 @@ Versions
 
 * 0.2 (June 28th 2013) - Added setup script to create a PyPI package. Removed bugs.
 
-* 0.3 (February 15th 2014) - Made compatible with Mezzanine and Bootstrap, changed 
-                               styles for errors, now handles empty local directories.
+* 0.3 (February 15th 2014) - Made compatible with Mezzanine and Bootstrap, changed styles for errors, now handles empty local directories.
 
 
 Copyright
 ---------
 
-The **chordgenerator** app is copyright (c) 2008-2013 
+The **Glyphviewer** app is copyright (c) 2008-2014 
 `Peter Murphy <http://www.pkmurphy.com.au/>`_ 
 <peterkmurphy@gmail.com>.
 
