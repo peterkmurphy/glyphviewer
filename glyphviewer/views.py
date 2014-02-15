@@ -25,7 +25,7 @@ from django.shortcuts import render_to_response;
 from django.conf import settings
 from glyphviewer import glyphCatcher, glyphArray, GC_ERRORMSG;
 import random;
-from settings import STATICFILES_DIRS, STATIC_URL
+from settings import STATIC_URL
 
 FONTS_DIR_ADD = "glyphviewer/fonts/";
 FIND_LOCAL_NAME = 0;
@@ -33,7 +33,7 @@ FIND_LOCAL_RANDOM = 1;
 FIND_REMOTE = 2;
 localfontfiles = [];
 fontnametodirectory = {};
-
+localfontempty = True;
 # Loads the documentation.
 
 def doc(request):
@@ -50,9 +50,11 @@ def getLocalFontFiles():
     '''
     global localfontfiles;
     global fontnametodirectory;
+    global localfontempty;
     if localfontfiles != []:
+        localfontempty = False;
         return (localfontfiles, fontnametodirectory,);
-    for i in settings.STATICFILES_DIRS:
+    for i in [settings.STATIC_ROOT]: 
         font_dir = os.path.join(i, FONTS_DIR_ADD);
         listdir = os.listdir(font_dir);
         filtereddir = filter(lambda(x): fnmatch.fnmatch(x, '*.ttf') or
@@ -63,6 +65,10 @@ def getLocalFontFiles():
                 localfontfiles.append(j);
                 fontnametodirectory[j] = font_dir;
     localfontfiles.sort();
+    if localfontfiles != []:
+        localfontempty = False;
+    else:
+        localfontempty = True;
     return (localfontfiles, fontnametodirectory,);
 
 
@@ -176,7 +182,7 @@ def index(request):
         'chosenitem': chosenitem, 'displayfont': displayfont, 'blocks': blocks,
         'ourerror': ourerror, 'ermsg': GC_ERRORMSG[ourerror], 
         'fontpath': fetchpath, 'shtables': shtables,
-        'remoteurl':remoteurl, 'is_remote':is_remote}));
+        'remoteurl':remoteurl, 'is_remote':is_remote, 'localfontempty': localfontempty}));
     
 
 

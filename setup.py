@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
-from distutils.core import setup
+from setuptools import setup
 
 setup(name='glyphviewer',
-    version='0.2',
+    version='0.3',
     description='A Django app for examining web fonts and the characters they contain.',
     author='Peter Murphy',
     author_email='peterkmurphy@gmail.com',
@@ -40,6 +40,6 @@ setup(name='glyphviewer',
         'Topic :: Text Processing :: Linguistic',
         'Topic :: Utilities',
         ],
-    long_description=open('README.txt').read(),
-    install_requires = ["Django >= 1.1.1"],
+    long_description=open('README.rst').read(),
+    install_requires = ["Django >= 1.0"],
 )

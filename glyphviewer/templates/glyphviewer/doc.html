@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block meta_title %}Glyphviewer Documentation{% endblock %}
+{% block title %}Glyphviewer Documentation{% endblock %}
 {% block main %}
-    <h1>Documentation</h1>
     <h2 id="what">What is Glyphviewer?</h2>
     <p><strong><a href="/glyphviewer/">Glyphviewer</a></strong> is a web application that analyses web font files.</p> 
     <ul><li>It lists the characters supported by a font using its glyphs. 
@@ -89,8 +89,8 @@ Glyphviewer will refuse to analyse it out of disgust.</li>
   <p>Glyphviewer depends on the following software:</p>
   <ul><li><a href="http://www.python.org/">Python</a> 2.x</li>
   <li><a href="http://www.djangoproject.com/">Django</a> 1.x</li>
-  <li>The <a href="http://sourceforge.net/projects/fonttools/">FontTools</a> for parsing TrueType and OpenType files.</li>
-  <li>The <a href="http://code.typesupply.com/wiki/woffTools">WoffTools</a>, built on top of FontTools, 
+  <li>The <a href="http://sourceforge.net/projects/fonttools/">FontTools</a> package for parsing TrueType and OpenType files.</li>
+  <li>The <a href="https://github.com/typesupply/woffTools">WoffTools</a> package, which is built on top of FontTools, 
   for parsing WOFF files.</li>
    <li><a href="http://sourceforge.net/projects/numpy/">Numerical Python (numpy)</a>, which is a dependency for
    both FontTools and WoffTools.</li></ul>
@@ -99,16 +99,21 @@ Glyphviewer will refuse to analyse it out of disgust.</li>
 
 <p>The next stage is to add "glyphviewer" to your INSTALLED_APPS list in settings.py, and add the
 desired URL in one of the urls.py files.</p>
-<p>The final stage is to populate the directory with fonts where you display your chosen font or fonts.
-Choose one directory from STATICFILES_DIRS, and add the subdirectory 'glyphviewer/fonts/'. The Glyphviewer
+<p>The final stage is to populate the directory with fonts where you display your chosen font or fonts. The Glyphviewer
 application comes with its own set of fonts adapted from the 
 <a href="https://savannah.gnu.org/projects/freefont/">Free UCS Outline Fonts</a>; they have been converted to
 WOFF form for quicker download. These can be moved into the correct directory via the following shell command:</p>
 <pre>python manage.py collectstatic</pre>
+<p>The font files wil then be moved into the {STATIC_ROOT}/glyphviewer/fonts/ directory, and the browser will read
+the files from the {STATIC_URL}/glyphviewer/fonts/ folder.</p>
+<p><em>Note: it is not mandatory to run the collectstatic command. However, if there are no font files in the above directory,
+then Glyphviewer will only be able to read remote files.</em></p>
 <p>The HTML template files in this application have been
 redesigned to work with the <a href="http://mezzanine.jupo.org/">Mezzanine</a> CMS. The 
 redesign removed any explicit references to particular stylesheets found with earlier versions.
-The app (and the fonts) are released under a <a href="http://www.gnu.org/copyleft/gpl.html">GNU general public license</a>.</p>
+The app (and the fonts) are released under a <a href="http://www.gnu.org/copyleft/gpl.html">GNU general public license</a>.
+If you wish to do any changes,
+pop over to the <a href="https://github.com/peterkmurphy/glyphviewer">GitHub repository</a> for the app.</p>
     
 <h2>Why Glyphviewer?</h2>
     <p>I created Glyphviewer as a tool to examine the character repetoire of web fonts. It is easy to find
@@ -150,6 +155,13 @@ A special shout out goes to the folk at <a href="http://www.typesupply.com/">Typ
 I must also acknowledge the 
 <a href="https://savannah.gnu.org/projects/freefont/">Free UCS Outline Fonts</a> project for providing
 the fonts used in this application.</p> 
+<h2>History</h2>
+<ul>
+<li>0.1 (June 11th 2011) - Initial release. </li>
+<li>0.2 (June 28th 2013) - Added setup script to create a PyPI package. Removed bugs.</li>
+<li>0.3 (February 15th 2014) - Made compatible with Mezzanine and Bootstrap, changed 
+                               styles for errors, now handles empty local directories.</li>
+</ul>
     <h2 id="techappendix">Glossay</h2>
     <dl>
     <dt><dt>Font</dt><dd>A file, or a set of files, that is used to specify the appearance of computer text. 
@@ -178,4 +190,6 @@ the fonts used in this application.</p>
     version of &quot;I&quot;, while an &quot;I&quot; in a <a href="http://en.wikipedia.org/wiki/Serif">serif</a> font would have serifs coming out at the front
     and the bottom. In short, there are many ways to create a glyph for the same characters.</dd> 
     </dl>
+ <p style="text-align: center;"><em>Copyright © <a href="/">Peter Murphy</a>
+2011, 2012, 2013, 2014.</em></p>   
 {% endblock %}

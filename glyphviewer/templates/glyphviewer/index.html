@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load glyphtable %}
 {% block meta_title %}Glyphviewer{% endblock %}
+{% block title %}Glyphviewer{% endblock %}
 {% block extra_css %}
 <style type="text/css">
 @font-face {
@@ -43,8 +44,6 @@ window.onload=function(){
 }
 </script>
 
-<h1>Glyphviewer</h1>
-<p>&nbsp;</p>
 <p><strong>Glyphviewer</strong> is a web application that analyses web font files. This app will parse any 
 web font file provided as input, and will display its general information (such as name and copyright details) to the user. <strong>Glyphviewer</strong> also provides a testbed where users can enter text, and
 have it displayed using the font. Finally, this application can display the characters supported by the font along with 
@@ -56,60 +55,57 @@ the them. The result will be a very long page, which may be an issue for users w
 <form id="fontchoice" action="." method="get" class="inline">
 <fieldset>
 <legend>Choose a font to analyse.</legend>
-<div class = "row-fluid">
-<div class = "span1"> <!-- Label -->
+  <div class="row"> 
+    <div class="col-md-3">
 <label class="inlineinput" for="rlocal">Local</label>
-</div>
-<div class = "span1"> <!-- Radio Button -->
-<input class="inlineinput" type="radio" name="Location" id="rlocal" value="Local"  {% if not is_remote %} checked="checked" {% endif %} onClick="setLocal();" />
-</div>
-<div class = "span1"> <!-- Second Label -->
+<input class="inlineinput" type="radio" name="Location" id="rlocal" value="Local"  {% if not is_remote  and  not localfontempty %} checked="checked"   {% endif %} 
+{% if localfontempty %} disabled {% endif %}onClick="setLocal();" />
+</div>    <!-- class="col-md-3" -->
+<div class="col-md-2">
 <label class="inlineinput" for="fontname">File</label>
-</div>
-<div class= "span9"> <!-- Control -->
-<select class="inlineinput" id="fontname" name="fontname" >
+</div>    <!-- class="col-md-2" -->
+<div class="col-md-7">
+<select class="inlineinput" id="fontname" name="fontname" style="width:100%;" {% if localfontempty %} disabled {% endif %}>
 {% for result in reslistdir %}
     <option {% ifequal result chosenitem %}selected{% endifequal %} value="{{ result }}">{{ result }}</option>
 {% endfor %}
 </select>
-</div>
-</div> <!-- End row. -->
-<div class = "row-fluid">
-<div class = "span1"> <!-- Label -->
+</div><!-- class="col-md-9" -->
+</div><!-- class="row" --><p></p>
+    <div class="row"> 
+    <div class="col-md-3">
 <label class="inlineinput" for="rremote">Remote</label>
-</div>
-<div class = "span1"> <!-- Radio Button -->
 <input class="inlineinput" type="radio" name="Location" id="rremote" 
-value="Remote" {% if is_remote %} checked="checked" {% endif %}
+value="Remote" {% if is_remote  or  localfontempty %} checked="checked" {% endif %}
 onClick="setRemote();"/>
-</div>
-<div class = "span1"> <!-- Second Label -->
+</div><!-- class="col-md-3" -->
+<div class="col-md-2">
 <label class="inlineinput" for="fonturl">URL</label>
-</div>
-<div class= "span9"> <!-- Control -->
-<input class="inlineinput" type="text" name="fonturl" id="fonturl" value="{% autoescape on %}{{ remoteurl }}{% endautoescape %}"/>
-</div>
-</div> <!-- End row. -->
-
-<div class = "row-fluid">
-<div class="span3">
+</div>    <!-- class="col-md-2" -->
+<div class="col-md-7">
+<input class="inlineinput" type="text" name="fonturl" id="fonturl" value="{% autoescape on %}{{ remoteurl }}{% endautoescape %}" style="width:100%;"/>
+</div><!-- class="col-md-9" -->
+</div> <!-- class="row" --><p></p>
+    <div class="row"> 
+    <div class="col-md-6">
 <label class="inlineinput" for="shtables">Shows characters in font</label>
-</div>
-<div class="span1">
 <input class="inlineinput" type="checkbox" {% ifequal shtables True %}checked="checked"{% endifequal %}
  name="shtables" id="shtables" value="shtables" />
-</div>
-<div class="span5">
+ </div>    <!-- class="col-md-6" -->
+<div class="col-md-6">
 <label class="inlineinput" for="blocks">Arrange characters as Unicode blocks</label>
-</div>
-<div class="span1">
 <input class="inlineinput" type="checkbox" {% ifequal blocks True %}checked="checked"{% endifequal %}
  name="blocks" id="blocks" value="blocks" />
-</div>
-<div class= "span2">
+ </div>    <!-- class="col-md-6" -->
+ </div> <!-- class="row" --><p></p>
+    <div class="row"> 
+ <div class="col-md-12 text-right">
+
 <input class="inlineinput button" type="submit" value="Submit" />
-</div>
-</div>           
+ </div>    <!-- class="col-md-12" -->
+
+</div> <!-- class="row" --><p></p>
+ 
 </fieldset>
 </form>
 
@@ -128,23 +124,21 @@ their defaults.</p>
     <fieldset>
     <legend>Enter some text to try out the font.</legend>
     <p>
-        <textarea name="glytrial" id="glytrial" rows="20" cols="120">Hello world!</textarea>
+        <textarea name="glytrial" id="glytrial" rows="20"  style="-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box; box-sizing: border-box; width: 100%;">Hello world!</textarea>
     </p>
-    <div class = "row-fluid">
-    <div class ="span3">
+    <div class="row"> 
+    <div class="col-md-5">
     <label class="inlineinput" for="fontsize">Font size (in pixels)</label>
-    </div>
-    <div class="span5">
     <input class="inlineinput" style="width:100px;" type="text" name="fontsize" id="fontsize" value="16" onkeyup="checkInput(this)"/>
-    </div>
-    <div class="span2">
+    </div> <!-- class="col-md-5" --> 
+    <div class="col-md-4">
         <input type="button" value="Try it" onClick="setIt(glytrial.value);">
-    </div>
-    
-    <div class="span2">
+	 </div><!-- class="col-md-4" --> 
+    <div class="col-md-3 text-right">
         <input type="reset" value="Reset" onClick="resetIt();"/>
-    </div>
-    </div>
+	 </div><!-- class="col-md-3" --> 
+    </div> <!-- class="row" --> 
     </fieldset>
 </form>
 
@@ -160,9 +154,20 @@ code points are displayed underneath each character.</p>
 <p style="text-align: right;"><a href="#top">Return to the top</a></p>
 {% endif %}
 {% else %}
-<div class="error">
-<h2>Error</h2>
-<p>Glyphviewer was unable to deal with the resource {{ displayfont }}. {{ ermsg }}</p>
+
+<!-- We have to be careful of errors when the local font directory is empty, but the default is local. -->
+
+{% if not is_remote  and  localfontempty %} 
+<div class="alert alert-warning">
+<h2>Warning</h2>
+<p>There is no local font resource to analyse. You can only analyse remote font files.</p>
 </div>
+{% else %} 
+
+<div class="alert alert-danger">
+<h2>Error</h2>
+<p>Glyphviewer was unable to deal with the resource &quot;{{ displayfont }}&quot;. {{ ermsg }}</p>
+</div>
+{% endif %} 
 {% endif %}
 {% endblock %}
