@@ -19,8 +19,8 @@ Installation and Dependencies
 
 * `Python 2.x <http://www.python.org/>`_
 * `Django 1.x <http://www.djangoproject.com/>`_
-* The `FontTools <http://sourceforge.net/projects/fonttools/>`_ for parsing TrueType and OpenType files.
-* The `WoffTools <http://code.typesupply.com/wiki/woffTools>`_, built on top of FontTools, for parsing WOFF files.
+* The `FontTools <http://sourceforge.net/projects/fonttools/>`_ package for parsing TrueType and OpenType files.
+* The `WoffTools <https://github.com/typesupply/woffTools>`_, package built on top of FontTools, for parsing WOFF files.
 * `Numerical Python (numpy) <http://sourceforge.net/projects/numpy/>`_, which is a dependency for both FontTools and WoffTools.
 
 Once these libraries have been installed, the next stage is to install **Glyphviewer** 
@@ -31,14 +31,14 @@ from PyPI through the command:
 The next stage is to add "glyphviewer" to your INSTALLED_APPS list in settings.py, 
 and add the desired URL in one of the urls.py files.
 
-The final stage is to populate the directory with fonts where you display your chosen
-font or fonts. Choose one directory from STATICFILES_DIRS, and add the subdirectory 
-'glyphviewer/fonts/'. The Glyphviewer application comes with its own set of fonts 
-adapted from the `Free UCS Outline Fonts <https://savannah.gnu.org/projects/freefont/>`_; they have been converted to WOFF form 
-for quicker download. These can be moved into the correct directory via the 
-following shell command:
+The final stage is to populate the directory with fonts where you display your chosen font or fonts. 
+The Glyphviewer application comes with its own set of fonts adapted from the `Free UCS Outline Fonts <https://savannah.gnu.org/projects/freefont/>`_; 
+they have been converted to WOFF form for quicker download. These can be moved into the correct directory via the following shell command:
 
     python manage.py collectstatic
+
+The font files wil then be moved into the {STATIC_ROOT}/glyphviewer/fonts/ directory, and the browser will 
+read the files from the {STATIC_URL}/glyphviewer/fonts/ folder.
 
 The HTML template files in this application have been redesigned to work with the 
 `Mezzanine <http://mezzanine.jupo.org/>`_ CMS. The redesign removed any explicit 
