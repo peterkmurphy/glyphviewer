@@ -8,7 +8,7 @@
     font-family: "OurFontOfNote";
     src: url("{{ fontpath }}");
 }
-.glyphchar {font-family: "OurFontOfNote";}
+.glyphchar {font-family: "OurFontOfNote"; font-size:20px;}
 </style>
 {% endblock %}
 {% block main %}
@@ -39,7 +39,7 @@ function setLocal() {
 }
 window.onload=function(){
   document.getElementById("glytrial").wrap='off';
-  document.getElementById('glyphexample').style.fontSize="16px";
+  document.getElementById('glyphexample').style.fontSize="20px";
 //  if (radios[0]) { setLocal();} else {setRemote();}
 }
 </script>
@@ -130,7 +130,7 @@ their defaults.</p>
     <div class="row"> 
     <div class="col-md-5">
     <label class="inlineinput" for="fontsize">Font size (in pixels)</label>
-    <input class="inlineinput" style="width:100px;" type="text" name="fontsize" id="fontsize" value="16" onkeyup="checkInput(this)"/>
+    <input class="inlineinput" style="width:100px;" type="text" name="fontsize" id="fontsize" value="20" onkeyup="checkInput(this)"/>
     </div> <!-- class="col-md-5" --> 
     <div class="col-md-4">
         <input type="button" value="Try it" onClick="setIt(glytrial.value);">

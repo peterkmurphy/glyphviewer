@@ -26,7 +26,7 @@ DEFAULT_GLYPHTABLE_SIZE = 16; # 16 is a nice round number.
 
 # The following constants are nice for interpolation.
 
-TABSUM = u"<table style=\"table-layout: fixed;\" class=\"glyphtable\">\n";
+TABSUM = u"<table style=\"table-layout: fixed; width:100%;\" class=\"glyphtable table-bordered table-styled\">\n";
 TABCAP = u"<caption class=\"glyphcaption\"><strong>%s</strong></caption>\n<tbody \
 class=\"glyphtbody\">\n";
 
