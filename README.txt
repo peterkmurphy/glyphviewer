@@ -19,14 +19,13 @@ Installation and Dependencies
 
 * `Python 2.x <http://www.python.org/>`_
 * `Django 1.x <http://www.djangoproject.com/>`_
-* The `FontTools <http://sourceforge.net/projects/fonttools/>`_ package for parsing TrueType and OpenType files.
-* The `WoffTools <https://github.com/typesupply/woffTools>`_, package built on top of FontTools, for parsing WOFF files.
-* `Numerical Python (numpy) <http://sourceforge.net/projects/numpy/>`_, which is a dependency for both FontTools and WoffTools.
+* The `FontTools <https://github.com/behdad/fonttools>`_ package for parsing TrueType, OpenType and WOFF files.
+* `Numerical Python (numpy) <http://sourceforge.net/projects/numpy/>`_, which FontTools depends upon.
 
 Once these libraries have been installed, the next stage is to install **Glyphviewer** 
 from PyPI through the command:
 
-    pip install glyphviewer
+``pip install glyphviewer``
 
 The next stage is to add "glyphviewer" to your INSTALLED_APPS list in settings.py, 
 and add the desired URL in one of the urls.py files.
@@ -35,7 +34,7 @@ The final stage is to populate the directory with fonts where you display your c
 The Glyphviewer application comes with its own set of fonts adapted from the `Free UCS Outline Fonts <https://savannah.gnu.org/projects/freefont/>`_; 
 they have been converted to WOFF form for quicker download. These can be moved into the correct directory via the following shell command:
 
-    python manage.py collectstatic
+``python manage.py collectstatic``
 
 The font files wil then be moved into the {STATIC_ROOT}/glyphviewer/fonts/ directory, and the browser will 
 read the files from the {STATIC_URL}/glyphviewer/fonts/ folder.
@@ -57,11 +56,12 @@ Versions
 
 * 0.3 (February 15th 2014) - Made compatible with Mezzanine and Bootstrap, changed styles for errors, now handles empty local directories.
 
+* 0.4 (January 16th 2016) - Now handles cases where remote fonts are inaccessible using CORS; removed the limitation that restricted characters to the BMP; added documentation for above. 
 
 Copyright
 ---------
 
-The **Glyphviewer** app is copyright (c) 2008-2014 
+The **Glyphviewer** app is copyright (c) 2011-2016 
 `Peter Murphy <http://www.pkmurphy.com.au/>`_ 
 <peterkmurphy@gmail.com>.
 

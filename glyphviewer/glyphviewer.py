@@ -2,7 +2,7 @@
 #-*- coding: UTF-8 -*-
 # File: glyphviewer.py 
 # Goal - to read the unicode points for a font and pass it as a map.
-# Copyright (C) 2013, Peter Murphy <peterkmurphy@gmail.com>
+# Copyright (C) 2013-2016 Peter Murphy <peterkmurphy@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,13 +19,14 @@
 
 from blocks import block, namefromindex, indexfromname, numblocks;
 from fontTools import ttLib;
-from woffTools import WOFFFont;
 import os.path;
 import urllib;
 import datetime;
+import urllib2
 
 PLAT_STANDARD_ID = 3; # Never changes.
 PLAT_UNIENC_ID = 1; # We're only interested in Unicode encodings.
+PLAT_UCS4_ID = 10; # We're only interested in Unicode encodings.
 ALL_CHAR_BLOCK = u"All Unicode Characters";
 FONT_NAME_PLATID = 1; # Used with getting Font name info. Do not change.
 FONT_NAME_ENCID = 0; # Used with getting Font name info. Do not change.
@@ -61,6 +62,7 @@ GC_NOTAFONT = 5; # Not a font.
 GC_NOHEADER = 6; # No font header.
 GC_NOUNICODE = 7; # Symbol font or other dodginess.
 GC_OTHERERROR = 8; # Exception thrown somewhere else or other.
+GC_WARNCORS = 9; # Problem with CORS and remote resources.
 
 # These are the limitations on the function, so it won't accept some
 # excessively sized object.
@@ -80,7 +82,11 @@ GC_ERRORMSG = ["", # No error message for status 0,
     "There is no font header found.",
     "The font does not appear to be a legitimate Unicode font. Did you select a 'Symbol' or \
     'Wingdings' font for processing? If so, shame on you.",
-    "We don't know what's happened, but some error has arisen. Sorry about that."];
+    "We don't know what's happened, but some error has arisen. Sorry about that.",
+    "It is possible to analyse the font header, but CORS prevents the \
+    display of the glyphs in the font. In this case, the browser will display characters \
+    using some fall-back font, which should not be used as a guide to the appearance of the \
+    font selected here."];
 
 
 # For characters that shouldn't be printed.
@@ -187,7 +193,7 @@ class fontHeader():
     def __str__(self):
         return unicode(self);
 
-def glyphCatcher(fontName, bStoreInBlocks = False, debugMode = False):
+def glyphCatcher(fontName, bStoreInBlocks = False, debugMode = False, bCheckCORS=False):
     ''' This is the main meat of the glyphviewer application. The function
         takes a font, extracts the header and a list of the glyphs it
         supports. Or attempts to...
@@ -202,6 +208,7 @@ def glyphCatcher(fontName, bStoreInBlocks = False, debugMode = False):
         sequences, each corresponding to blocks in Unicode. 
         debugMode: if True, fontName can be a file name. If False, fontName
         must be a URL. This is generally the same value as settings.DEBUG.
+        bCheckCORS: whether to check for Cross Origin Resource Sharing
     '''
 
     def _cleanup(arg):
@@ -216,6 +223,7 @@ def glyphCatcher(fontName, bStoreInBlocks = False, debugMode = False):
 
     bUseTempFile = False;
     retrievalInfo = None;
+    bCORSBlues = False
     
 # Is the font a local resource, or accessed by http?        
     
@@ -224,8 +232,15 @@ def glyphCatcher(fontName, bStoreInBlocks = False, debugMode = False):
     else:
         opener = urllib.FancyURLopener({})
         try:
+            print ("Wow")
+            print (fontName)
             nowtime = datetime.datetime.now();
             retrievalInfo = opener.retrieve(fontName, reporthook=sizecheck)
+            if bCheckCORS:
+                if "Access-Control-Allow-Origin" not in retrievalInfo[1]:
+                    bCORSBlues = True
+                elif retrievalInfo[1]["Access-Control-Allow-Origin"] != "*":
+                    bCORSBlues = True
             
         except TooBigException:
             return (GC_TOOBIG, None, None,);
@@ -239,20 +254,25 @@ def glyphCatcher(fontName, bStoreInBlocks = False, debugMode = False):
     try:
         ourFont = ttLib.TTFont(resourceName);
     except (ttLib.TTLibError):
-        try:
-            ourFont = WOFFFont(resourceName);
-        except:
-            return _cleanup((GC_NOTAFONT, None, None,));
+        print ttLib.TTLibError.message
+        return _cleanup((GC_NOTAFONT, None, None,));
     except:
         return _cleanup((GC_OTHERERROR, None, None,));
-
+    
 # Since TTFont (and WOFFFont) are "lazy", non-fonts may not be detected until
 # an explicit attempt is done to read the cmap table.
 
+    if bCORSBlues:
+        ourgoodoutcome = GC_WARNCORS
+    else:
+        ourgoodoutcome = GC_NOERROR
+
     try:
-        cmaptable = ourFont['cmap'].getcmap(PLAT_STANDARD_ID, PLAT_UNIENC_ID);
+        cmaptable = ourFont['cmap'].getcmap(PLAT_STANDARD_ID, PLAT_UCS4_ID);
         if cmaptable is None:
-            return _cleanup((GC_NOUNICODE, None, None,));
+            cmaptable = ourFont['cmap'].getcmap(PLAT_STANDARD_ID, PLAT_UNIENC_ID);
+            if cmaptable is None:
+                return _cleanup((GC_NOUNICODE, None, None,));
         ourheader = fontHeader(ourFont['name']);
     except:
         return _cleanup((GC_NOHEADER, None, None,));
@@ -269,7 +289,7 @@ def glyphCatcher(fontName, bStoreInBlocks = False, debugMode = False):
             if len(blockcontents[i]) > 0:
                 blockarrangements.append(glyphArray(namefromindex(i), 
                     blockcontents[i]));
-        return _cleanup((GC_NOERROR,ourheader,blockarrangements,));
+        return _cleanup((ourgoodoutcome,ourheader,blockarrangements,));
     else:
         blockcontents = list(cmaptable.cmap.keys());
         blockcontents.sort();
@@ -279,7 +299,7 @@ def glyphCatcher(fontName, bStoreInBlocks = False, debugMode = False):
                 ExcellentGlyphArray.codePoints.append(i);                
             else:
                 DodgyGlyphArray.codePoints.append(i);
-        return _cleanup((GC_NOERROR, ourheader,[DodgyGlyphArray, ExcellentGlyphArray],));
+        return _cleanup((ourgoodoutcome, ourheader,[DodgyGlyphArray, ExcellentGlyphArray],));
 
 if __name__ == '__main__':
     print glyphCatcher("", True);

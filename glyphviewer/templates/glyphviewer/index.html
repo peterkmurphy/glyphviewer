@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% load glyphtable %}
 {% block meta_title %}Glyphviewer{% endblock %}
+{% block meta_keywords %}font, ttf, otf, woff, glyph, character, Unicode{% endblock %}
+{% block meta_description %}An application to analyse font files.{% endblock %}
 {% block title %}Glyphviewer{% endblock %}
 {% block extra_css %}
 <style type="text/css">
@@ -44,14 +46,18 @@ window.onload=function(){
 }
 </script>
 
-<p><strong>Glyphviewer</strong> is a web application that analyses web font files. This app will parse any 
-web font file provided as input, and will display its general information (such as name and copyright details) to the user. <strong>Glyphviewer</strong> also provides a testbed where users can enter text, and
-have it displayed using the font. Finally, this application can display the characters supported by the font along with 
-their Unicode codepoints.</p>
+<p><strong>Glyphviewer</strong> is a web application that analyses web font files. This app will attempt to parse any 
+web font file provided as input. If successful, it will display general "header" information (such as name and copyright details)
+to the user. <strong>Glyphviewer</strong> also provides a testbed where users can enter text, and
+have it displayed using the font. Finally, if the user chooses <strong>Shows characters in font</strong>, this application will
+display the characters supported by the font along with their Unicode codepoints.</p>
 <p>For more information about this application, see the <a href="doc/">documentation</a>.</p> 
-<p><em>Note: most modern fonts represents hundreds, if not thousands, of characters. When the 
+<p><em>Note 1: most modern fonts represents hundreds, if not thousands, of characters. When the 
 <strong>Shows characters in fonts</strong> checkbox is checked, the app will try to display <strong>all</strong> of
 the them. The result will be a very long page, which may be an issue for users with bandwidth problems.</em></p>
+<p><em>Note 2: <strong>Glyphviewer</strong> will now only be guaranteed to work with remote fonts if 
+<a href="https://en.wikipedia.org/wiki/Cross-origin_resource_sharing">Cross-origin Resource Sharing</a> (CORS) is
+enabled in the remote server. Please see the <a href="doc/">documentation</a> for more information on this.</em></p>
 <form id="fontchoice" action="." method="get" class="inline">
 <fieldset>
 <legend>Choose a font to analyse.</legend>
@@ -109,8 +115,14 @@ onClick="setRemote();"/>
 </fieldset>
 </form>
 
-{% if ourerror == 0 %}
-
+{% if ourerror == 0 or ourerror == 9 %}
+{% if ourerror == 9 %}
+<div class="alert alert-warning">
+<h2>Warning</h2>
+<p>Glyphviewer has issues dealing with the resource &quot;{{ displayfont }}&quot;. {{ ermsg }}</p>
+<p>For more information, please see the <a href="doc/">documentation</a>.</p>
+</div>
+{% endif %}
 <h2>General information</h2>
 <p>This shows information for the font file <strong>{{ displayfont }}</strong> derived from its header.</p>
 {% showheader ourheader %}

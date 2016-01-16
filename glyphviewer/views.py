@@ -1,7 +1,7 @@
 #!/usr/bin/python 
 #-*- coding: UTF-8 -*-
 # File: views.py 
-# Copyright (C) 2013, Peter Murphy <peterkmurphy@gmail.com>
+# Copyright (C) 2013-2016 Peter Murphy <peterkmurphy@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -138,20 +138,24 @@ def index(request):
 # (iv) 'fetchpath': the URL which is used to analyse the font (whereever it is).
 # (v) 'displayfont': what font info is actually displayed to the user.
 
+    
     if locchoice == FIND_LOCAL_NAME:
         is_remote = False;
         chosenitem = fontlocal;
         remoteurl = "";
         fetchpath = urlparse.urljoin(localfontdir_url, fontlocal); 
-        displayfont = fontlocal;            
+        displayfont = fontlocal; 
+        bCheckCORS = False        
     elif locchoice == FIND_REMOTE:
         is_remote = True;
         chosenitem = "";
         remoteurl = fontremote;
         fetchpath = fontremote; 
         displayfont = fontremote;
+        bCheckCORS = True
     else: # locchoice == FIND_LOCAL_RANDOM:
         is_remote = False;
+        bCheckCORS = False
         random.seed();
         if len(localfontfiles):
             chosenitem = random.choice(localfontfiles); 
@@ -162,8 +166,8 @@ def index(request):
         displayfont = chosenitem;
 
 # Now we analyse the font!
-
-    ourtuples = glyphCatcher(fetchpath, blocks, settings.DEBUG);
+    
+    ourtuples = glyphCatcher(fetchpath, blocks, settings.DEBUG, bCheckCORS);
     
 # The 'ourerror' variable contains the error message (if relevant).    
     
