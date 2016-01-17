@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from blocks import block, namefromindex, indexfromname, numblocks;
+from blocks import blockbyint, namefromindex, indexfromname, numblocks;
 from fontTools import ttLib;
 import os.path;
 import urllib;
@@ -282,7 +282,7 @@ def glyphCatcher(fontName, bStoreInBlocks = False, debugMode = False, bCheckCORS
             if not isvalhtml(i):
                 DodgyGlyphArray.codePoints.append(i);
             else:
-                (blockcontents[indexfromname(block(unichr(i)))]).append(i);
+                (blockcontents[indexfromname(blockbyint(i))]).append(i);
         [i.sort() for i in blockcontents];
         blockarrangements = [DodgyGlyphArray];
         for i in range(numblocks()):

@@ -43,6 +43,11 @@ def block(ch):
     for start, end, name in _blocks:
         if start <= cp <= end:
             return name;
+            
+def blockbyint(intval):
+    for start, end, name in _blocks:
+        if start <= intval <= end:
+            return name;    
 
 def namefromindex(ith):
     ''' Returns the name of the ith block. '''

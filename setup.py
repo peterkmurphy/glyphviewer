@@ -3,7 +3,7 @@
 from setuptools import setup
 
 setup(name='glyphviewer',
-    version='0.4',
+    version='0.4.1',
     description='A Django app for examining web fonts and the characters they contain.',
     author='Peter Murphy',
     author_email='peterkmurphy@gmail.com',
@@ -41,5 +41,5 @@ setup(name='glyphviewer',
         'Topic :: Utilities',
         ],
     long_description=open('README.rst').read(),
-    install_requires = ["Django >= 1.0"],
+    install_requires = ["Django >= 1.0", "fonttools >= 3.0"],
 )
