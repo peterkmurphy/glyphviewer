@@ -1,7 +1,7 @@
-#!/usr/bin/python 
+#!/usr/bin/python
 #-*- coding: UTF-8 -*-
-# File: urls.py 
-# Copyright (C) 2013, Peter Murphy <peterkmurphy@gmail.com>
+# File: urls.py
+# Copyright (C) 2013-2017 Peter Murphy <peterkmurphy@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -16,9 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.conf.urls.defaults import *
+from django.conf.urls import url, include
+from views import index as glyphindex, doc as glyphdoc
 
-urlpatterns = patterns('',
-    (r'^doc/$', 'glyphviewer.views.doc'),
-    (r'^$', 'glyphviewer.views.index'),    
-)
+urlpatterns =[ url(r'^$', glyphindex), url(r'^doc/$', glyphdoc),]
