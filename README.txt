@@ -58,7 +58,7 @@ Versions
 
 * 0.4 (January 16th 2016) - Now handles cases where remote fonts are inaccessible using CORS; removed the limitation that restricted characters to the BMP; added documentation for above.
 
-* 0.5 (March 14th 2017) - Updated to be compatible with Django 1.10. Now automatically install dependencies using pip.
+* 0.5 (March 31st 2017) - Updated to be compatible with Django 1.10. Now automatically install dependencies using pip.
 
 Copyright
 ---------

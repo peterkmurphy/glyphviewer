@@ -5,5 +5,5 @@ v0.3, 15/02/2014 -- Made compatible with Mezzanine and Bootstrap, changed
 v0.4, 16/01/2016 -- Now handles cases where remote fonts are inaccessible using CORS;
                     removed the limitation that restricted characters to the BMP;
                     added documentation for above.
-v0.5 14/03/2017) -- Updated to be compatible with Django 1.10. Now automatically
-                    install dependencies using pip.                    
+v0.5, 31/03/2017 -- Updated to be compatible with Django 1.10. Now automatically
+                    install dependencies using pip.
