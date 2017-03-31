@@ -22,8 +22,7 @@ Installation and Dependencies
 * The `FontTools <https://github.com/behdad/fonttools>`_ package for parsing TrueType, OpenType and WOFF files.
 * `Numerical Python (numpy) <http://sourceforge.net/projects/numpy/>`_, which FontTools depends upon.
 
-Once these libraries have been installed, the next stage is to install **Glyphviewer**
-from PyPI through the command:
+**Glyphviewer** and its dependencies can be installed via the command:
 
 ``pip install glyphviewer``
 
