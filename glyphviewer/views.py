@@ -1,7 +1,7 @@
 #!/usr/bin/python
 #-*- coding: UTF-8 -*-
 # File: views.py
-# Copyright (C) 2013-2016 Peter Murphy <peterkmurphy@gmail.com>
+# Copyright (C) 2013-2018 Peter Murphy <peterkmurphy@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -58,8 +58,8 @@ def getLocalFontFiles():
         font_dir = os.path.join(i, FONTS_DIR_ADD);
         listdir = os.listdir(font_dir);
         filtereddir = filter(lambda(x): fnmatch.fnmatch(x, '*.ttf') or
-            fnmatch.fnmatch(x, '*.otf') or fnmatch.fnmatch(x, '*.woff'),
-            listdir);
+            fnmatch.fnmatch(x, '*.otf') or fnmatch.fnmatch(x, '*.woff') or
+            fnmatch.fnmatch(x, '*.woff2'), listdir);
         for j in filtereddir:
             if not fontnametodirectory.has_key(j):
                 localfontfiles.append(j);

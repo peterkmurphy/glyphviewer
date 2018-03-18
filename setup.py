@@ -41,5 +41,5 @@ setup(name='glyphviewer',
         'Topic :: Utilities',
         ],
     long_description=open('README.rst').read(),
-    install_requires = ["Django >= 1.0", "fonttools >= 3.0", "numpy >= 1.0"],
+    install_requires = ["Django >= 1.0", "fonttools >= 3.0", "numpy >= 1.0", "brotli"],
 )

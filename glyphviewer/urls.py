@@ -1,7 +1,7 @@
 #!/usr/bin/python
 #-*- coding: UTF-8 -*-
 # File: urls.py
-# Copyright (C) 2013-2017 Peter Murphy <peterkmurphy@gmail.com>
+# Copyright (C) 2013-2018 Peter Murphy <peterkmurphy@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by

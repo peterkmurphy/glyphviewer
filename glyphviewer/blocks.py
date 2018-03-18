@@ -1,11 +1,11 @@
-#!/usr/bin/python 
+#!/usr/bin/python
 #-*- coding: UTF-8 -*-
-# File: blocks.py 
+# File: blocks.py
 # Solely for identifying Unicode blocks for unicode characters.
 # Based on code from:
 # http://stackoverflow.com/questions/243831/unicode-block-of-a-character-in-python
 # But updated for 2013.
-# Copyright (C) 2013-2016 Peter Murphy <peterkmurphy@gmail.com>
+# Copyright (C) 2013-2018 Peter Murphy <peterkmurphy@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 
 import re;
 
-PRIV_USE_BLOCK = 144; 
+PRIV_USE_BLOCK = 144;
 
 # If fonts characters are not in an assigned block, then they are assigned to the
 # Private Use Area by default.
@@ -43,11 +43,11 @@ def block(ch):
     for start, end, name in _blocks:
         if start <= cp <= end:
             return name;
-            
+
 def blockbyint(intval):
     for start, end, name in _blocks:
         if start <= intval <= end:
-            return name;    
+            return name;
 
 def namefromindex(ith):
     ''' Returns the name of the ith block. '''
@@ -97,12 +97,12 @@ _initBlocks('''
 # Note:   When comparing block names, casing, whitespace, hyphens,
 #         and underbars are ignored.
 #         For example, "Latin Extended-A" and "latin extended a" are equivalent.
-#         For more information on the comparison of property values, 
+#         For more information on the comparison of property values,
 #            see UAX #44: http://www.unicode.org/reports/tr44/
 #
 #  All block ranges start with a value where (cp MOD 16) = 0,
 #  and end with a value where (cp MOD 16) = 15. In other words,
-#  the last hexadecimal digit of the start of range is ...0 
+#  the last hexadecimal digit of the start of range is ...0
 #  and the last hexadecimal digit of the end of range is ...F.
 #  This constraint on block ranges guarantees that allocations
 #  are done in terms of whole columns, and that code chart display
@@ -387,8 +387,3 @@ if __name__ == '__main__':
     print block(unichr(0xF8FF))
     print block(unichr(0x10000))
     print block(unichr(0x10ffff))
-    
-
-
-
-

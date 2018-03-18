@@ -1,8 +1,8 @@
-#!/usr/bin/python 
+#!/usr/bin/python
 #-*- coding: UTF-8 -*-
-# File: glyphviewer.py 
+# File: glyphviewer.py
 # Goal - to read the unicode points for a font and pass it as a map.
-# Copyright (C) 2013-2016 Peter Murphy <peterkmurphy@gmail.com>
+# Copyright (C) 2013-2018 Peter Murphy <peterkmurphy@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -35,22 +35,22 @@ FONT_NAME_ENCID = 0; # Used with getting Font name info. Do not change.
 # http://developer.apple.com/fonts/TTRefMan/RM06/Chap6name.html
 
 FONT_NAME_CPY = 0; # Copyright notice.
-FONT_NAME_FFY = 1; # Font Family. 
+FONT_NAME_FFY = 1; # Font Family.
 FONT_NAME_SFY = 2; # Font Subfamily.
 FONT_NAME_USI = 3; # Unique subfamily identification.
 FONT_NAME_FNM = 4; # Full name of the font.
 FONT_NAME_VSN = 5; # Version of the name table.
-FONT_NAME_PSC = 6; # PostScript name of the font. 
+FONT_NAME_PSC = 6; # PostScript name of the font.
 FONT_NAME_TMK = 7; # Trademark notice.
 FONT_NAME_MFC = 8; # Manufacturer name.
 FONT_NAME_DES = 9; # Designer; name of the designer of the typeface.
-FONT_NAME_DCS = 10; # Description; description of the typeface. 
-FONT_NAME_URL = 11; # URL of the font vendor (e.g., http://, ftp://). 
+FONT_NAME_DCS = 10; # Description; description of the typeface.
+FONT_NAME_URL = 11; # URL of the font vendor (e.g., http://, ftp://).
 FONT_NAME_URD = 12; # URL of the font designer (e.g., http://, ftp://)
 FONT_NAME_LDS = 13; # Description of how the font may be legally used.
 FONT_NAME_LIU = 14; # License information URL
 
-# These are error codes from GlyphCatcher. I like to give numeric values - 
+# These are error codes from GlyphCatcher. I like to give numeric values -
 # blame my C/C++ heritage.
 
 GC_NOERROR = 0;
@@ -96,7 +96,7 @@ DODGY = "Invalid HTML Characters"
 def isvalhtml(ichar):
     ''' Input: numerical value for character. Returns True if it corresponds
     to a legitimate HTML character; False otherwise.
-    
+
     Note 1: not tested for characters beyond 65536.
     Note 2: makes 0 a dodgy character as well.
     '''
@@ -138,7 +138,7 @@ def sizecheck(count, blockSize, totalSize):
     sizeread = 0;
     blocksize = blockSize;
 #    if datetime.datetime.now() - nowtime > FONT_TIMEOUT_DELTA:
-#        raise TimeoutException;    
+#        raise TimeoutException;
     if totalSize > FONT_MAX_SIZE:
         raise TooBigException(totalSize);
     if count * blocksize > FONT_MAX_SIZE:
@@ -147,15 +147,15 @@ def sizecheck(count, blockSize, totalSize):
 
 class glyphArray():
     ''' Represents a array of unicode character with the name of its block
-        (or "All Unicode Characters" if there is no particular block. 
+        (or "All Unicode Characters" if there is no particular block.
     '''
     def __init__(self, blockName, codePoints):
         self.blockName = blockName;
         self.codePoints = codePoints;
-        
+
     def __unicode__(self):
         return self.blockName + ": " + unicode(self.codePoints) + u"\n";
-        
+
     def __str__(self):
         return unicode(self);
 
@@ -170,26 +170,26 @@ class fontHeader():
                 return our_data.string;
             else:
                 return None;
-                
+
         self.copyright = stringex(FONT_NAME_CPY); # Copyright notice.
-        self.fontfamily = stringex(FONT_NAME_FFY); # Font Family. 
+        self.fontfamily = stringex(FONT_NAME_FFY); # Font Family.
         self.subfamily = stringex(FONT_NAME_SFY); # Font Subfamily.
         self.usi = stringex(FONT_NAME_USI); # Unique subfamily identification.
         self.fullname = stringex(FONT_NAME_FNM); # Full name of the font.
         self.version = stringex(FONT_NAME_VSN); # Version of the name table.
-        self.ps = stringex(FONT_NAME_PSC); # PostScript name of the font. 
+        self.ps = stringex(FONT_NAME_PSC); # PostScript name of the font.
         self.trademark = stringex(FONT_NAME_TMK); # Trademark notice.
         self.manufac = stringex(FONT_NAME_MFC); # Manufacturer name.
         self.designer = stringex(FONT_NAME_DES); # Designer name.
         self.description = stringex(FONT_NAME_DCS); # Description.
-        self.urlfontven = stringex(FONT_NAME_URL); # font vendor URL. 
+        self.urlfontven = stringex(FONT_NAME_URL); # font vendor URL.
         self.urlfontdes = stringex(FONT_NAME_URD); # font designer URL.
         self.descrip = stringex(FONT_NAME_LDS); # Legal use information.
         self.licenseurl = stringex(FONT_NAME_LIU); # License information URL.
-        
+
     def __unicode__(self):
         return self.fullname;
-        
+
     def __str__(self):
         return unicode(self);
 
@@ -197,15 +197,15 @@ def glyphCatcher(fontName, bStoreInBlocks = False, debugMode = False, bCheckCORS
     ''' This is the main meat of the glyphviewer application. The function
         takes a font, extracts the header and a list of the glyphs it
         supports. Or attempts to...
-        
+
         Return values are of the form:
         (error code, fontHeader, sequence of glyphArray,)
-        
+
         Arguments:
         fontName: the file name or URL for a font.
         bStoreInBlocks: if False, the function returns a stored sequence of
         integers for the glyphs. if True, the function returns a sequence of
-        sequences, each corresponding to blocks in Unicode. 
+        sequences, each corresponding to blocks in Unicode.
         debugMode: if True, fontName can be a file name. If False, fontName
         must be a URL. This is generally the same value as settings.DEBUG.
         bCheckCORS: whether to check for Cross Origin Resource Sharing
@@ -224,9 +224,9 @@ def glyphCatcher(fontName, bStoreInBlocks = False, debugMode = False, bCheckCORS
     bUseTempFile = False;
     retrievalInfo = None;
     bCORSBlues = False
-    
-# Is the font a local resource, or accessed by http?        
-    
+
+# Is the font a local resource, or accessed by http?
+
     if os.path.exists(fontName) & debugMode:
         resourceName = fontName;
     else:
@@ -241,7 +241,7 @@ def glyphCatcher(fontName, bStoreInBlocks = False, debugMode = False, bCheckCORS
                     bCORSBlues = True
                 elif retrievalInfo[1]["Access-Control-Allow-Origin"] != "*":
                     bCORSBlues = True
-            
+
         except TooBigException:
             return (GC_TOOBIG, None, None,);
         except TimeoutException:
@@ -250,7 +250,7 @@ def glyphCatcher(fontName, bStoreInBlocks = False, debugMode = False, bCheckCORS
             return (GC_RETFAIL, None, None);
         resourceName = retrievalInfo[0];
         bUseTempFile = True;
-    
+
     try:
         ourFont = ttLib.TTFont(resourceName);
     except (ttLib.TTLibError):
@@ -258,7 +258,7 @@ def glyphCatcher(fontName, bStoreInBlocks = False, debugMode = False, bCheckCORS
         return _cleanup((GC_NOTAFONT, None, None,));
     except:
         return _cleanup((GC_OTHERERROR, None, None,));
-    
+
 # Since TTFont (and WOFFFont) are "lazy", non-fonts may not be detected until
 # an explicit attempt is done to read the cmap table.
 
@@ -287,7 +287,7 @@ def glyphCatcher(fontName, bStoreInBlocks = False, debugMode = False, bCheckCORS
         blockarrangements = [DodgyGlyphArray];
         for i in range(numblocks()):
             if len(blockcontents[i]) > 0:
-                blockarrangements.append(glyphArray(namefromindex(i), 
+                blockarrangements.append(glyphArray(namefromindex(i),
                     blockcontents[i]));
         return _cleanup((ourgoodoutcome,ourheader,blockarrangements,));
     else:
@@ -296,7 +296,7 @@ def glyphCatcher(fontName, bStoreInBlocks = False, debugMode = False, bCheckCORS
         ExcellentGlyphArray = glyphArray(ALL_CHAR_BLOCK,[])
         for i in blockcontents:
             if isvalhtml(i):
-                ExcellentGlyphArray.codePoints.append(i);                
+                ExcellentGlyphArray.codePoints.append(i);
             else:
                 DodgyGlyphArray.codePoints.append(i);
         return _cleanup((ourgoodoutcome, ourheader,[DodgyGlyphArray, ExcellentGlyphArray],));
@@ -305,13 +305,13 @@ if __name__ == '__main__':
     print glyphCatcher("", True);
     content = glyphCatcher("http://themes.googleusercontent.com/static/fonts/robotoslab/v1/y7lebkjgREBJK96VQi37ZobN6UDyHWBl620a-IRfuBk.woff", False); #""http://127.0.0.1:8000/static/glyphviewer/fonts/Essays1743.woff", True);
     header = content[1];
-    print header; 
-    print header.urlfontven 
-    print header.urlfontdes 
+    print header;
+    print header.urlfontven
+    print header.urlfontdes
     body = content[2];
     for i in body:
         print i;
  #   content = glyphCatcher("http://127.0.0.1:8000/static/glyphviewer/fonts/Essays1743.woff", False);
  #   body = content[2];
  #   for i in body:
- #       print i;        
+ #       print i;

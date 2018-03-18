@@ -1,8 +1,8 @@
-#!/usr/bin/python 
+#!/usr/bin/python
 #-*- coding: UTF-8 -*-
-# File: glyphtable.py 
+# File: glyphtable.py
 # Goal - to provide a nice template tag to represent tables of glyphs.
-# Copyright (C) 2013, Peter Murphy <peterkmurphy@gmail.com>
+# Copyright (C) 2013-2018 Peter Murphy <peterkmurphy@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ class=\"glyphtbody\">\n";
 #class=\"glyphtbody\">\n";
 
 
-#<td rowspan="number"> 
+#<td rowspan="number">
 
 
 CELLMAKER = "<td class = \"glyphtd\"><p class = \"glyphchar text-center\">&#%s;<br />\n\
@@ -49,17 +49,17 @@ def glyphtable(value, arg = DEFAULT_GLYPHTABLE_SIZE):
     ''' Takes an argument (value) that is assumed to be of type glyphArray.
     The function returns HTML that represents all the glyphs as a table. The
     arg argument indicates the number of columns for the table.
-    
-    Note: many of the generated entries are given HTML classes - all the 
-    better for CSS styling.    
-    
+
+    Note: many of the generated entries are given HTML classes - all the
+    better for CSS styling.
+
     '''
     try:
-        
+
 # Note: for HTML validity, font characters that are control or line break are
-# not represented in table form nor displayed, but are listed by their 
+# not represented in table form nor displayed, but are listed by their
 # numerical code points.
-        
+
         if (value.blockName == DODGY):
             if (len(value.codePoints) == 0):
                 return "";
@@ -70,18 +70,18 @@ def glyphtable(value, arg = DEFAULT_GLYPHTABLE_SIZE):
             output += "<ul>\n";
             for i in value.codePoints:
                 output += "<li>U+%04X</li>\n" % i;
-            output += "</ul>\n";            
+            output += "</ul>\n";
             return mark_safe(output);
-        
+
 # Any exception - any at all - returns an empty string.
 
         blocksize = len(value.codePoints);
         numfullrows = blocksize / arg;
         remainder = (blocksize % arg);
         output = TABSUM + TABCAP % value.blockName;
-        
-# It's more efficient to create output whole rows.         
-        
+
+# It's more efficient to create output whole rows.
+
         for i in range(numfullrows):
             output += "<tr class = \"glyphtr\">"
             for j in range(arg):
@@ -96,7 +96,7 @@ def glyphtable(value, arg = DEFAULT_GLYPHTABLE_SIZE):
             return mark_safe(output);
         output += "<tr class = \"glyphtr\">"
         for j in range(remainder):
-            ournumber = value.codePoints[j + numfullrows * arg]; 
+            ournumber = value.codePoints[j + numfullrows * arg];
             output += CELLMAKER % (str(ournumber), ournumber,);
         for j in range(arg - remainder):
             output += REMAINDER;
@@ -113,9 +113,3 @@ glyphtable.is_safe = False
 @register.inclusion_tag('glyphviewer/showheader.html')
 def showheader(value):
     return {'value': value}
-
-
-
-
-
-
