@@ -12,15 +12,8 @@ where users can enter text, and have it displayed using the font. Finally, this
 application can display the characters supported by the font along with their Unicode
 codepoints. A demonstration is available `here <http://www.pkmurphy.com.au/glyphviewer/>`_.
 
-Installation and Dependencies
+Installation
 -----------------------------
-
-**Glyphviewer** depends on the following software:
-
-* `Python 2.x <http://www.python.org/>`_
-* `Django 1.x <http://www.djangoproject.com/>`_
-* The `FontTools <https://github.com/behdad/fonttools>`_ package for parsing TrueType, OpenType and WOFF files.
-* `Numerical Python (numpy) <http://sourceforge.net/projects/numpy/>`_, which FontTools depends upon.
 
 **Glyphviewer** and its dependencies can be installed via the command:
 
@@ -59,9 +52,11 @@ Versions
 
 * 0.5 (March 31st 2017) - Updated to be compatible with Django 1.10. Now automatically install dependencies using pip.
 
+* 0.6 (March 18th 2018) - Add WOFF2 compatibility.
+
 Copyright
 ---------
 
-The **Glyphviewer** app is copyright (c) 2011-2016
+The **Glyphviewer** app is copyright (c) 2011-2018
 `Peter Murphy <http://www.pkmurphy.com.au/>`_
 <peterkmurphy@gmail.com>.
