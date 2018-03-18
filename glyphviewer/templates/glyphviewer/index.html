@@ -46,42 +46,55 @@ window.onload=function(){
 }
 </script>
 
-<p><strong>Glyphviewer</strong> is a web application that analyses web font files. This app will attempt to parse any 
-web font file provided as input. If successful, it will display general "header" information (such as name and copyright details)
-to the user. <strong>Glyphviewer</strong> also provides a testbed where users can enter text, and
-have it displayed using the font. Finally, if the user chooses <strong>Shows characters in font</strong>, this application will
-display the characters supported by the font along with their Unicode codepoints.</p>
-<p>For more information about this application, see the <a href="doc/">documentation</a>.</p> 
-<p><em>Note 1: most modern fonts represents hundreds, if not thousands, of characters. When the 
-<strong>Shows characters in fonts</strong> checkbox is checked, the app will try to display <strong>all</strong> of
-the them. The result will be a very long page, which may be an issue for users with bandwidth problems.</em></p>
-<p><em>Note 2: <strong>Glyphviewer</strong> will now only be guaranteed to work with remote fonts if 
-<a href="https://en.wikipedia.org/wiki/Cross-origin_resource_sharing">Cross-origin Resource Sharing</a> (CORS) is
-enabled in the remote server. Please see the <a href="doc/">documentation</a> for more information on this.</em></p>
+<p><strong>Glyphviewer</strong> is a web application that analyses web font
+files. This app will attempt to parse any web font file provided as input. If
+successful, it will display general "header" information (such as name and
+copyright details) to the user. <strong>Glyphviewer</strong> also provides a
+testbed where users can enter text, and have it displayed using the font.
+Finally, if the user chooses <strong>Shows characters in font</strong>, this
+application will display the characters supported by the font along with their
+Unicode codepoints.</p>
+
+<p>For more information about this application, see the
+<a href="doc/">documentation</a>.</p>
+
+<p><em>Note 1: most modern fonts represents hundreds, if not thousands, of
+characters. When the <strong>Shows characters in fonts</strong> checkbox is
+checked, the app will try to display <strong>all</strong> characters in the font
+(albeit at the bottom of the page). The result may be a very long page. This is
+why <strong>Shows characters in fonts</strong> is turned off by default.</em></p>
+<p><em>Note 2: <strong>Glyphviewer</strong> will now only be guaranteed to work
+with remote fonts if
+<a href="https://en.wikipedia.org/wiki/Cross-origin_resource_sharing">Cross-origin
+Resource Sharing</a> (CORS) is enabled in the remote server. Please see the
+<a href="doc/">documentation</a> for more information on this.</em></p>
 <form id="fontchoice" action="." method="get" class="inline">
 <fieldset>
 <legend>Choose a font to analyse.</legend>
-  <div class="row"> 
+  <div class="row">
     <div class="col-md-3">
 <label class="inlineinput" for="rlocal">Local</label>
-<input class="inlineinput" type="radio" name="Location" id="rlocal" value="Local"  {% if not is_remote  and  not localfontempty %} checked="checked"   {% endif %} 
+<input class="inlineinput" type="radio" name="Location" id="rlocal" value="Local"
+{% if not is_remote  and  not localfontempty %} checked="checked"   {% endif %}
 {% if localfontempty %} disabled {% endif %}onClick="setLocal();" />
 </div>    <!-- class="col-md-3" -->
 <div class="col-md-2">
 <label class="inlineinput" for="fontname">File</label>
 </div>    <!-- class="col-md-2" -->
 <div class="col-md-7">
-<select class="inlineinput" id="fontname" name="fontname" style="width:100%;" {% if localfontempty %} disabled {% endif %}>
+<select class="inlineinput" id="fontname" name="fontname" style="width:100%;"
+{% if localfontempty %} disabled {% endif %}>
 {% for result in reslistdir %}
-    <option {% ifequal result chosenitem %}selected{% endifequal %} value="{{ result }}">{{ result }}</option>
+    <option {% ifequal result chosenitem %}selected{% endifequal %}
+    value="{{ result }}">{{ result }}</option>
 {% endfor %}
 </select>
 </div><!-- class="col-md-9" -->
 </div><!-- class="row" --><p></p>
-    <div class="row"> 
+    <div class="row">
     <div class="col-md-3">
 <label class="inlineinput" for="rremote">Remote</label>
-<input class="inlineinput" type="radio" name="Location" id="rremote" 
+<input class="inlineinput" type="radio" name="Location" id="rremote"
 value="Remote" {% if is_remote  or  localfontempty %} checked="checked" {% endif %}
 onClick="setRemote();"/>
 </div><!-- class="col-md-3" -->
@@ -89,29 +102,32 @@ onClick="setRemote();"/>
 <label class="inlineinput" for="fonturl">URL</label>
 </div>    <!-- class="col-md-2" -->
 <div class="col-md-7">
-<input class="inlineinput" type="text" name="fonturl" id="fonturl" value="{% autoescape on %}{{ remoteurl }}{% endautoescape %}" style="width:100%;"/>
+<input class="inlineinput" type="text" name="fonturl" id="fonturl"
+value="{% autoescape on %}{{ remoteurl }}{% endautoescape %}" style="width:100%;"/>
 </div><!-- class="col-md-9" -->
 </div> <!-- class="row" --><p></p>
-    <div class="row"> 
+    <div class="row">
     <div class="col-md-6">
 <label class="inlineinput" for="shtables">Shows characters in font</label>
-<input class="inlineinput" type="checkbox" {% ifequal shtables True %}checked="checked"{% endifequal %}
+<input class="inlineinput" type="checkbox"
+{% ifequal shtables True %}checked="checked"{% endifequal %}
  name="shtables" id="shtables" value="shtables" />
  </div>    <!-- class="col-md-6" -->
 <div class="col-md-6">
 <label class="inlineinput" for="blocks">Arrange characters as Unicode blocks</label>
-<input class="inlineinput" type="checkbox" {% ifequal blocks True %}checked="checked"{% endifequal %}
+<input class="inlineinput" type="checkbox"
+{% ifequal blocks True %}checked="checked"{% endifequal %}
  name="blocks" id="blocks" value="blocks" />
  </div>    <!-- class="col-md-6" -->
  </div> <!-- class="row" --><p></p>
-    <div class="row"> 
+    <div class="row">
  <div class="col-md-12 text-right">
 
 <input class="inlineinput button" type="submit" value="Submit" />
  </div>    <!-- class="col-md-12" -->
 
 </div> <!-- class="row" --><p></p>
- 
+
 </fieldset>
 </form>
 
@@ -119,38 +135,42 @@ onClick="setRemote();"/>
 {% if ourerror == 9 %}
 <div class="alert alert-warning">
 <h2>Warning</h2>
-<p>Glyphviewer has issues dealing with the resource &quot;{{ displayfont }}&quot;. {{ ermsg }}</p>
+<p>Glyphviewer has issues dealing with the resource
+    &quot;{{ displayfont }}&quot;. {{ ermsg }}</p>
 <p>For more information, please see the <a href="doc/">documentation</a>.</p>
 </div>
 {% endif %}
 <h2>General information</h2>
-<p>This shows information for the font file <strong>{{ displayfont }}</strong> derived from its header.</p>
+<p>This shows information for the font file <strong>{{ displayfont }}</strong>
+    derived from its header.</p>
 {% showheader ourheader %}
 <p style="text-align: right;"><a href="#top">Return to the top</a></p>
 <h2>Testbed</h2>
-<p>Here is a sample message. Below it lies a text area where you can enter your test text.
-Adjust the font size, and click "Try it" to change the message. Hit "Reset" to return all settings to 
-their defaults.</p>
+<p>Here is a sample message. Below it lies a text area where you can enter your
+    test text. Adjust the font size, and click "Try it" to change the message.
+    Hit "Reset" to return all settings to their defaults.</p>
 <pre class="glyphchar success" id ="glyphexample">Hello world!</pre>
 <form id="textentry" action="." method="post">
     <fieldset>
     <legend>Enter some text to try out the font.</legend>
     <p>
-        <textarea name="glytrial" id="glytrial" rows="20"  style="-webkit-box-sizing: border-box;
-	-moz-box-sizing: border-box; box-sizing: border-box; width: 100%;">Hello world!</textarea>
+        <textarea name="glytrial" id="glytrial" rows="20"
+        style="-webkit-box-sizing: border-box; -moz-box-sizing:
+        border-box; box-sizing: border-box; width: 100%;">Hello world!</textarea>
     </p>
-    <div class="row"> 
+    <div class="row">
     <div class="col-md-5">
     <label class="inlineinput" for="fontsize">Font size (in pixels)</label>
-    <input class="inlineinput" style="width:100px;" type="text" name="fontsize" id="fontsize" value="20" onkeyup="checkInput(this)"/>
-    </div> <!-- class="col-md-5" --> 
+    <input class="inlineinput" style="width:100px;" type="text" name="fontsize"
+        id="fontsize" value="20" onkeyup="checkInput(this)"/>
+    </div> <!-- class="col-md-5" -->
     <div class="col-md-4">
         <input type="button" value="Try it" onClick="setIt(glytrial.value);">
-	 </div><!-- class="col-md-4" --> 
+	 </div><!-- class="col-md-4" -->
     <div class="col-md-3 text-right">
         <input type="reset" value="Reset" onClick="resetIt();"/>
-	 </div><!-- class="col-md-3" --> 
-    </div> <!-- class="row" --> 
+	 </div><!-- class="col-md-3" -->
+    </div> <!-- class="row" -->
     </fieldset>
 </form>
 
@@ -162,24 +182,27 @@ code points are displayed underneath each character.</p>
 
 {% for ourglyph in ourglyphs %}
     {{ ourglyph|glyphtable:8 }}
-{% endfor %} 
+{% endfor %}
 <p style="text-align: right;"><a href="#top">Return to the top</a></p>
 {% endif %}
 {% else %}
 
-<!-- We have to be careful of errors when the local font directory is empty, but the default is local. -->
+<!-- We have to be careful of errors when the local font directory is empty, but
+ the default is local. -->
 
-{% if not is_remote  and  localfontempty %} 
+{% if not is_remote  and  localfontempty %}
 <div class="alert alert-warning">
 <h2>Warning</h2>
-<p>There is no local font resource to analyse. You can only analyse remote font files.</p>
+<p>There is no local font resource to analyse. You can only analyse remote font
+     files.</p>
 </div>
-{% else %} 
+{% else %}
 
 <div class="alert alert-danger">
 <h2>Error</h2>
-<p>Glyphviewer was unable to deal with the resource &quot;{{ displayfont }}&quot;. {{ ermsg }}</p>
+<p>Glyphviewer was unable to deal with the resource
+    &quot;{{ displayfont }}&quot;. {{ ermsg }}</p>
 </div>
-{% endif %} 
+{% endif %}
 {% endif %}
 {% endblock %}

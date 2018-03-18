@@ -13,13 +13,24 @@
 <p id="why"><em>For those unsure about the meaning of &quot;glyph&quot;, &quot;font&quot;, and &quot;web font&quot;,
 a small <a href="#techappendix">glossary</a> is provided at the end.</em></p>
         <h2 id="usage">Glyphviewer Usage</h2>
-    <p>Glyphviewer analyses font files, not fonts per se. (A font may consist of multiple files.)
-    Permissible formats are TrueType (.ttf),
-    OpenType (.otf), and best of all, <a href="http://www.w3.org/TR/WOFF/">Web Open Font Format</a> (.woff).
-    WOFF is preferred, because font data is compressed by design, resulting in quicker download.</p>
-    <ul><li>Users will find it easiest to analyse a web font file stored on the server hosting this application. This is
-    Glyphviewer's <em>default</em> behavior: when a user first encounters this page, the application
-    randomly selects one from its file system, and analyses it for inspection. Viewers can choose other
+    <p>Glyphviewer analyses font files, not fonts per se. (Computer fonts often consist of multiple files.)
+    There are several formats supported</p>
+    <ul>
+    <li>TrueType (.ttf)</li>
+    <li>OpenType (.otf)</li>
+    <li><a href="http://www.w3.org/TR/WOFF/">Web Open Font Format</a> (.woff). This is a font format designed
+        for the web, as font data is compressed by default. Since this results in smaller font sizes, fonts
+        are quicker to download.</li>
+    <li><a href="https://www.w3.org/TR/WOFF2/">Web Open Font Format 2</a> (.woff2), which manages even better
+        compression (and thus even quicker download times). This is a new standard as of March 2018.</li>
+    </ul>
+
+<p>There are two places where font files can be hosted for analysis. </p>
+
+    <ul><li>The default behavior for Glyphviewer is to analyse font files stored on the <strong>Local</strong> server hosting this application.
+
+        When a user first encounters this page, the application
+    randomly selects one from its file system, analyses it, and displays the results to the user. Users can choose other
     font files stored locally, as long as <strong>Local</strong> is checked; they just select an item
     from the <strong>File</strong> drop down list. All fonts are listed by file name, so <strong>File</strong>
     will display (say) &quot;DejaVuSans.woff&quot; rather than &quot;DejaVu Sans&quot;.</li>
@@ -100,7 +111,7 @@ load resources from third party websites unless certain criteria are met. For mo
 
     <h3 id="limitations">Limitations</h3>
     <p>Apart from issues arising from CORS, these are several limitations built in to Glyphviewer.</p>
-    <ul><li>Glyphviewer can only analyse OpenType, TrueType and Web Open Font Format font files. Other font files such
+    <ul><li>Glyphviewer can only analyse OpenType, TrueType and Web Open Font Format 1 and 2 font files. Other font files such
     as Embedded OpenType (.eot) and Scalable Vector Graphics (.svg) cannot be handled by this application.
     <li>The application has a font size limitation built in (as stated before).</li>
     <li>The application may be slow when analyzing a remote font, as the server has to access it to create a
@@ -110,29 +121,24 @@ load resources from third party websites unless certain criteria are met. For mo
     of this range were not displayed. Fortunately, this limitation has been removed from Glyphviewer as of version 0.4 (2016).</p>
 
 <h2 id="install">Installation and Dependencies</h2>
-  <p><strong>Glyphviewer</strong> depends on the following software:</p>
-  <ul><li><a href="http://www.python.org/">Python</a> 2.x</li>
-  <li><a href="http://www.djangoproject.com/">Django</a> 1.x</li>
-  <li>The <a href="https://github.com/behdad/fonttools">FontTools</a> package for parsing
-  TrueType, OpenType, and WOFF files.</li>
-   <li><a href="http://sourceforge.net/projects/numpy/">Numerical Python (numpy)</a>, which is used by FontTools.</li></ul>
+
+
+
+
+
+
+</ul>
    <p>If you have Python, the quickest way to install Glyphviewer (and its dependencies) is via the following command:</p>
    <pre>pip install glyphviewer</pre>
-     <p><em>Note: earlier versions of <strong>Glyphviewer</strong> depended on
-     <a href="https://github.com/typesupply/woffTools">WoffTools</a>, a package (built on top of FontTools)
-     for parsing WOFF files. However, FontTools has WOFF support, and WoffTools has not been worked on for several years,
-     so this dependency has been removed. Earlier versions of <strong>Glyphviewer</strong> also required Numerical Python
-      (numpy) to be installed "by hand", since there were problems installing it with "pip". Fortunately, "pip install
-      glyphviewer" will now provide all dependencies automatically.</em></p>
-<p>The next stage is to add "glyphviewer" to your INSTALLED_APPS list in settings.py, and add the
-desired URL in one of the urls.py files.</p>
+<p>The next stage is to add "glyphviewer" to your INSTALLED_APPS list in settings.py. The stage after that is to add then
+desired URL to one of the urls.py files.</p>
 <p>The final stage is to populate the directory with fonts where you display your chosen font or fonts. The Glyphviewer
 application comes with its own set of fonts adapted from the
 <a href="https://savannah.gnu.org/projects/freefont/">Free UCS Outline Fonts</a>; they have been converted to
 WOFF form for quicker download. These can be moved into the correct directory via the following shell command:</p>
 <pre>python manage.py collectstatic</pre>
-<p>The font files wil then be moved into the {STATIC_ROOT}/glyphviewer/fonts/ directory, and the browser will read
-the files from the {STATIC_URL}/glyphviewer/fonts/ folder.</p>
+<p>The font files wil then be moved into the <code>{STATIC_ROOT}/glyphviewer/fonts/</code> directory, and the browser will read
+the files from the <code>{STATIC_URL}/glyphviewer/fonts/</code> folder.</p>
 <p><em>Note: it is not mandatory to run the collectstatic command. However, if there are no font files in the above directory,
 then Glyphviewer will only be able to read remote files.</em></p>
 <p>The HTML template files in this application have been
@@ -141,6 +147,20 @@ redesign removed any explicit references to particular stylesheets found with ea
 The app (and the fonts) are released under a <a href="http://www.gnu.org/copyleft/gpl.html">GNU general public license</a>.
 If you wish to do any changes,
 pop over to the <a href="https://github.com/peterkmurphy/glyphviewer">GitHub repository</a> for the app.</p>
+<p><strong>Glyphviewer</strong> depends on the following software:</p>
+<ul><li><a href="http://www.python.org/">Python</a> 2.x</li>
+<li><a href="http://www.djangoproject.com/">Django</a> 1.x</li>
+<li>The <a href="https://github.com/behdad/fonttools">FontTools</a> package for parsing
+TrueType, OpenType, and WOFF files.</li>
+ <li><a href="http://sourceforge.net/projects/numpy/">Numerical Python (numpy)</a>, which is used by FontTools.</li>
+ <li><a href="https://github.com/google/brotli">Brotli</a>, a package which handles the compression algorithm used
+     by WOFF2.</li></ul>
+     <p><em>Note: earlier versions of <strong>Glyphviewer</strong> depended on
+     <a href="https://github.com/typesupply/woffTools">WoffTools</a>, a package (built on top of FontTools)
+     for parsing WOFF files. However, FontTools has WOFF support, and WoffTools has not been worked on for several years,
+     so this dependency has been removed. Earlier versions of <strong>Glyphviewer</strong> also required Numerical Python
+      (numpy) to be installed "by hand", since there were problems installing it with "pip". Fortunately, "pip install
+      glyphviewer" will now provide all dependencies automatically.</em></p>
 
 <h2>Why Glyphviewer?</h2>
     <p>I created Glyphviewer as a tool to examine the character repetoire of web fonts. It is easy to find
@@ -148,7 +168,7 @@ pop over to the <a href="https://github.com/peterkmurphy/glyphviewer">GitHub rep
     capital letters like &quot;A&quot;, &quot;B&quot; and &quot;C&quot;, and that's not hard to discover,
     because those are among the first characters to be advertised by the foundries. It's harder to find out
     how much support a font has for more <em>unusual</em> characters like (say) &quot;ŋ&quot;. One could
-    install a fonts on the computer, and inspect it in a tool like &quot;Character Map&quot;, but this is
+    install individual fonts on the computer, and inspect each in a tool like &quot;Character Map&quot;, but this is
     laborous and time-wasting.</p>
     <p>So I created a tool that could analyse a font if it was located somewhere on
     the World Wide Web. Font makers often display their fonts using web pages, and even provide a place
@@ -190,6 +210,7 @@ using CORS; removed the limitation that restricted characters to the BMP; added
 documentation for above.</li>
 <li>0.5 (March 31st 2017) - Updated to be compatible with Django 1.10. Now automatically
                     install dependencies using pip</li>
+<li>0.6 (March 18th 2018) - Add WOFF2 compatibility.</li>
 </ul>
     <h2 id="techappendix">Glossay</h2>
     <dl>
@@ -220,5 +241,5 @@ documentation for above.</li>
     and the bottom. In short, there are many ways to create a glyph for the same characters.</dd>
     </dl>
  <p style="text-align: center;"><em>Copyright © <a href="/">Peter Murphy</a>
-2011-2017.</em></p>
+2011-{% now "Y" %}.</em></p>
 {% endblock %}

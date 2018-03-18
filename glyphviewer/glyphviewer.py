@@ -232,8 +232,6 @@ def glyphCatcher(fontName, bStoreInBlocks = False, debugMode = False, bCheckCORS
     else:
         opener = urllib.FancyURLopener({})
         try:
-            print ("Wow")
-            print (fontName)
             nowtime = datetime.datetime.now();
             retrievalInfo = opener.retrieve(fontName, reporthook=sizecheck)
             if bCheckCORS:

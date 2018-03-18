@@ -128,7 +128,6 @@ def index(request):
     localbase_url = urlparse.urljoin("http://" + request.META["HTTP_HOST"],
         settings.STATIC_URL);
     localfontdir_url = urlparse.urljoin(localbase_url, FONTS_DIR_ADD);
-    print localfontdir_url;
 
 # Now we have to set:
 # (i) 'is_remote': False if the returned page has "Local" selected; True for
