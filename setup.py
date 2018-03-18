@@ -3,7 +3,7 @@
 from setuptools import setup
 
 setup(name='glyphviewer',
-    version='0.5.1',
+    version='0.6',
     description='A Django app for examining web fonts and the characters they contain.',
     author='Peter Murphy',
     author_email='peterkmurphy@gmail.com',
