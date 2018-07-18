@@ -227,6 +227,10 @@ def glyphCatcher(fontName, bStoreInBlocks = False, debugMode = False, bCheckCORS
 
 # Is the font a local resource, or accessed by http?
 
+# Note: two line hack prevents error when fontName is None
+
+    if fontName == None:
+        fontName = ''
     if os.path.exists(fontName) & debugMode:
         resourceName = fontName;
     else:
