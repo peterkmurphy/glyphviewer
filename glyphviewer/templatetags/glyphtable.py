@@ -2,7 +2,7 @@
 #-*- coding: UTF-8 -*-
 # File: glyphtable.py
 # Goal - to provide a nice template tag to represent tables of glyphs.
-# Copyright (C) 2013-2018 Peter Murphy <peterkmurphy@gmail.com>
+# Copyright (C) 2013-2020 Peter Murphy <peterkmurphy@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from glyphviewer.glyphviewer import glyphCatcher, glyphArray, fontHeader, DODGY;
+from ..glyphviewer import glyphCatcher, glyphArray, fontHeader, DODGY;
 from django import template;
 from django.utils.safestring import mark_safe
 
@@ -26,8 +26,8 @@ DEFAULT_GLYPHTABLE_SIZE = 16; # 16 is a nice round number.
 
 # The following constants are nice for interpolation.
 
-TABSUM = u"<table style=\"table-layout: fixed; width:100%;\" class=\"glyphtable table-bordered table-styled\">\n";
-TABCAP = u"<caption class=\"glyphcaption\"><strong>%s</strong></caption>\n<tbody \
+TABSUM = "<table style=\"table-layout: fixed; width:100%;\" class=\"glyphtable table-bordered table-styled\">\n";
+TABCAP = "<caption class=\"glyphcaption\"><strong>%s</strong></caption>\n<tbody \
 class=\"glyphtbody\">\n";
 
 #TABCAP = u"<thead><tr><th rowspan=\"8\">%s</th></tr></thead>\n<tbody \
@@ -76,7 +76,7 @@ def glyphtable(value, arg = DEFAULT_GLYPHTABLE_SIZE):
 # Any exception - any at all - returns an empty string.
 
         blocksize = len(value.codePoints);
-        numfullrows = blocksize / arg;
+        numfullrows = blocksize // arg;
         remainder = (blocksize % arg);
         output = TABSUM + TABCAP % value.blockName;
 

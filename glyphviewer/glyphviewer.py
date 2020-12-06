@@ -2,7 +2,7 @@
 #-*- coding: UTF-8 -*-
 # File: glyphviewer.py
 # Goal - to read the unicode points for a font and pass it as a map.
-# Copyright (C) 2013-2018 Peter Murphy <peterkmurphy@gmail.com>
+# Copyright (C) 2013-2020 Peter Murphy <peterkmurphy@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,17 +17,17 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from blocks import blockbyint, namefromindex, indexfromname, numblocks;
+from .blocks import blockbyint, namefromindex, indexfromname, numblocks;
 from fontTools import ttLib;
 import os.path;
-import urllib;
+import urllib.request, urllib.parse, urllib.error;
 import datetime;
-import urllib2
+
 
 PLAT_STANDARD_ID = 3; # Never changes.
 PLAT_UNIENC_ID = 1; # We're only interested in Unicode encodings.
 PLAT_UCS4_ID = 10; # We're only interested in Unicode encodings.
-ALL_CHAR_BLOCK = u"All Unicode Characters";
+ALL_CHAR_BLOCK = "All Unicode Characters";
 FONT_NAME_PLATID = 1; # Used with getting Font name info. Do not change.
 FONT_NAME_ENCID = 0; # Used with getting Font name info. Do not change.
 
@@ -153,11 +153,9 @@ class glyphArray():
         self.blockName = blockName;
         self.codePoints = codePoints;
 
-    def __unicode__(self):
-        return self.blockName + ": " + unicode(self.codePoints) + u"\n";
-
     def __str__(self):
-        return unicode(self);
+        return self.blockName + ": " + str(self.codePoints) + "\n";
+
 
 class fontHeader():
     ''' Represents the header of a font - in a form presentable in HTML. '''
@@ -187,11 +185,9 @@ class fontHeader():
         self.descrip = stringex(FONT_NAME_LDS); # Legal use information.
         self.licenseurl = stringex(FONT_NAME_LIU); # License information URL.
 
-    def __unicode__(self):
+    def __str__(self):
         return self.fullname;
 
-    def __str__(self):
-        return unicode(self);
 
 def glyphCatcher(fontName, bStoreInBlocks = False, debugMode = False, bCheckCORS=False):
     ''' This is the main meat of the glyphviewer application. The function
@@ -234,7 +230,7 @@ def glyphCatcher(fontName, bStoreInBlocks = False, debugMode = False, bCheckCORS
     if os.path.exists(fontName) & debugMode:
         resourceName = fontName;
     else:
-        opener = urllib.FancyURLopener({})
+        opener = urllib.request.FancyURLopener({})
         try:
             nowtime = datetime.datetime.now();
             retrievalInfo = opener.retrieve(fontName, reporthook=sizecheck)
@@ -256,7 +252,7 @@ def glyphCatcher(fontName, bStoreInBlocks = False, debugMode = False, bCheckCORS
     try:
         ourFont = ttLib.TTFont(resourceName);
     except (ttLib.TTLibError):
-        print ttLib.TTLibError.message
+        print(ttLib.TTLibError.message)
         return _cleanup((GC_NOTAFONT, None, None,));
     except:
         return _cleanup((GC_OTHERERROR, None, None,));
@@ -280,7 +276,7 @@ def glyphCatcher(fontName, bStoreInBlocks = False, debugMode = False, bCheckCORS
         return _cleanup((GC_NOHEADER, None, None,));
     if bStoreInBlocks:
         blockcontents = [[] for i in range(numblocks())];
-        for i in cmaptable.cmap.keys():
+        for i in list(cmaptable.cmap.keys()):
             if not isvalhtml(i):
                 DodgyGlyphArray.codePoints.append(i);
             else:
@@ -304,15 +300,15 @@ def glyphCatcher(fontName, bStoreInBlocks = False, debugMode = False, bCheckCORS
         return _cleanup((ourgoodoutcome, ourheader,[DodgyGlyphArray, ExcellentGlyphArray],));
 
 if __name__ == '__main__':
-    print glyphCatcher("", True);
+    print(glyphCatcher("", True));
     content = glyphCatcher("http://themes.googleusercontent.com/static/fonts/robotoslab/v1/y7lebkjgREBJK96VQi37ZobN6UDyHWBl620a-IRfuBk.woff", False); #""http://127.0.0.1:8000/static/glyphviewer/fonts/Essays1743.woff", True);
     header = content[1];
-    print header;
-    print header.urlfontven
-    print header.urlfontdes
+    print(header);
+    print(header.urlfontven)
+    print(header.urlfontdes)
     body = content[2];
     for i in body:
-        print i;
+        print(i);
  #   content = glyphCatcher("http://127.0.0.1:8000/static/glyphviewer/fonts/Essays1743.woff", False);
  #   body = content[2];
  #   for i in body:

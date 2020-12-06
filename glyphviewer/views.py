@@ -1,7 +1,7 @@
 #!/usr/bin/python
 #-*- coding: UTF-8 -*-
 # File: views.py
-# Copyright (C) 2013-2018 Peter Murphy <peterkmurphy@gmail.com>
+# Copyright (C) 2013-2020 Peter Murphy <peterkmurphy@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,13 +17,13 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os, fnmatch;
-import urlparse;
+import urllib.parse;
 from django.template import Context, RequestContext, loader
 from django.http import HttpResponse, Http404, HttpResponseRedirect;
 from django.template.response import TemplateResponse;
 from django.shortcuts import render_to_response;
 from django.conf import settings
-from glyphviewer import glyphCatcher, glyphArray, GC_ERRORMSG;
+from .glyphviewer import glyphCatcher, glyphArray, GC_ERRORMSG;
 import random;
 from django.shortcuts import render
 #from theproject.settings import STATIC_URL
@@ -57,11 +57,11 @@ def getLocalFontFiles():
     for i in [settings.STATIC_ROOT]:
         font_dir = os.path.join(i, FONTS_DIR_ADD);
         listdir = os.listdir(font_dir);
-        filtereddir = filter(lambda(x): fnmatch.fnmatch(x, '*.ttf') or
+        filtereddir = [x for x in listdir if fnmatch.fnmatch(x, '*.ttf') or
             fnmatch.fnmatch(x, '*.otf') or fnmatch.fnmatch(x, '*.woff') or
-            fnmatch.fnmatch(x, '*.woff2'), listdir);
+            fnmatch.fnmatch(x, '*.woff2')];
         for j in filtereddir:
-            if not fontnametodirectory.has_key(j):
+            if j not in fontnametodirectory:
                 localfontfiles.append(j);
                 fontnametodirectory[j] = font_dir;
     localfontfiles.sort();
@@ -125,9 +125,9 @@ def index(request):
 
 # The "localfontdir_url" is an URL to where font files are stored.
 
-    localbase_url = urlparse.urljoin("http://" + request.META["HTTP_HOST"],
+    localbase_url = urllib.parse.urljoin("http://" + request.META["HTTP_HOST"],
         settings.STATIC_URL);
-    localfontdir_url = urlparse.urljoin(localbase_url, FONTS_DIR_ADD);
+    localfontdir_url = urllib.parse.urljoin(localbase_url, FONTS_DIR_ADD);
 
 # Now we have to set:
 # (i) 'is_remote': False if the returned page has "Local" selected; True for
@@ -142,7 +142,7 @@ def index(request):
         is_remote = False;
         chosenitem = fontlocal;
         remoteurl = "";
-        fetchpath = urlparse.urljoin(localfontdir_url, fontlocal);
+        fetchpath = urllib.parse.urljoin(localfontdir_url, fontlocal);
         displayfont = fontlocal;
         bCheckCORS = False
     elif locchoice == FIND_REMOTE:
@@ -161,7 +161,7 @@ def index(request):
         else:
             chosenitem = "";
         remoteurl = "";
-        fetchpath = urlparse.urljoin(localfontdir_url, chosenitem);
+        fetchpath = urllib.parse.urljoin(localfontdir_url, chosenitem);
         displayfont = chosenitem;
 
 # Now we analyse the font!

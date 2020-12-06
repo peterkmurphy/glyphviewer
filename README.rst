@@ -54,9 +54,11 @@ Versions
 
 * 0.6 (March 18th 2018) - Add WOFF2 compatibility.
 
+* 0.7 (December 6th 2020) - Updated for Python 3 compatibility.
+
 Copyright
 ---------
 
-The **Glyphviewer** app is copyright (c) 2011-2018
+The **Glyphviewer** app is copyright (c) 2011-2020
 `Peter Murphy <http://www.pkmurphy.com.au/>`_
 <peterkmurphy@gmail.com>.

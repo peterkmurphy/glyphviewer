@@ -7,4 +7,5 @@ v0.4, 16/01/2016 -- Now handles cases where remote fonts are inaccessible using 
                     added documentation for above.
 v0.5, 31/03/2017 -- Updated to be compatible with Django 1.10. Now automatically
                     install dependencies using pip.
-v0.6, 18/03/2018 -- Added WOFF2 compatibility.                   
+v0.6, 18/03/2018 -- Added WOFF2 compatibility.
+v0.7, 06/12/2020 -- Updated for Python 3 compatibility.                   
