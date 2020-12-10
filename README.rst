@@ -56,6 +56,8 @@ Versions
 
 * 0.7 (December 6th 2020) - Updated for Python 3 compatibility.
 
+* 0.8 (December 10th 2020) - Better representation of font header information as text; better use of urllib for Python 3.
+
 Copyright
 ---------
 

@@ -122,10 +122,11 @@ def index(request):
 # "fontnametodirectory" is a key-value pairs of font files to their directory.
 
     (localfontfiles, fontnametodirectory,) = getLocalFontFiles();
+    schemestart = request.scheme + "://"
 
 # The "localfontdir_url" is an URL to where font files are stored.
 
-    localbase_url = urllib.parse.urljoin("http://" + request.META["HTTP_HOST"],
+    localbase_url = urllib.parse.urljoin(schemestart + request.META["HTTP_HOST"],
         settings.STATIC_URL);
     localfontdir_url = urllib.parse.urljoin(localbase_url, FONTS_DIR_ADD);
 
@@ -136,7 +137,6 @@ def index(request):
 # (iii) 'remoteurl': the value to set the "URL" text box.
 # (iv) 'fetchpath': the URL which is used to analyse the font (whereever it is).
 # (v) 'displayfont': what font info is actually displayed to the user.
-
 
     if locchoice == FIND_LOCAL_NAME:
         is_remote = False;

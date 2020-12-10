@@ -22,6 +22,7 @@ from fontTools import ttLib;
 import os.path;
 import urllib.request, urllib.parse, urllib.error;
 import datetime;
+import chardet;
 
 
 PLAT_STANDARD_ID = 3; # Never changes.
@@ -165,7 +166,16 @@ class fontHeader():
                 FONT_NAME_ENCID);
             self.ournametable = ournametable
             if our_data:
-                return our_data.string;
+                if isinstance(our_data.string, (bytes, bytearray)):
+                    try:
+                        encodinginfo = chardet.detect(our_data.string)['encoding']
+                        return our_data.string.decode(encodinginfo)
+                    except UnicodeDecodeError:
+                        return our_data.string
+                    except KeyError:
+                        return our_data.string                        
+                else:                        
+                    return our_data.string
             else:
                 return None;
 
@@ -230,10 +240,9 @@ def glyphCatcher(fontName, bStoreInBlocks = False, debugMode = False, bCheckCORS
     if os.path.exists(fontName) & debugMode:
         resourceName = fontName;
     else:
-        opener = urllib.request.FancyURLopener({})
         try:
             nowtime = datetime.datetime.now();
-            retrievalInfo = opener.retrieve(fontName, reporthook=sizecheck)
+            retrievalInfo = urllib.request.urlretrieve(fontName, reporthook=sizecheck)
             if bCheckCORS:
                 if "Access-Control-Allow-Origin" not in retrievalInfo[1]:
                     bCORSBlues = True
