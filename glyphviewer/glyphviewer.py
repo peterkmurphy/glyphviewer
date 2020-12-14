@@ -79,7 +79,8 @@ GC_ERRORMSG = ["", # No error message for status 0,
     "It cannot be accessed or retrieved.",
     "It too more than %d seconds to retrieve it." % FONT_TIMEOUT,
     "It exceeds %d bytes in size. " % FONT_MAX_SIZE,
-    "It does not appear to be a legitimate font file.",
+    "It does not appear to use a supported font file format, such as OpenType, TrueType, or Web Open Font Format 1 and 2. \
+    Glyphviewer cannot read font files in other formats, such as Embedded OpenType (.eot) and Scalable Vector Graphics (.svg).",
     "There is no font header found.",
     "The font does not appear to be a legitimate Unicode font. Did you select a 'Symbol' or \
     'Wingdings' font for processing? If so, shame on you.",
@@ -261,7 +262,6 @@ def glyphCatcher(fontName, bStoreInBlocks = False, debugMode = False, bCheckCORS
     try:
         ourFont = ttLib.TTFont(resourceName);
     except (ttLib.TTLibError):
-        print(ttLib.TTLibError.message)
         return _cleanup((GC_NOTAFONT, None, None,));
     except:
         return _cleanup((GC_OTHERERROR, None, None,));
@@ -307,18 +307,3 @@ def glyphCatcher(fontName, bStoreInBlocks = False, debugMode = False, bCheckCORS
             else:
                 DodgyGlyphArray.codePoints.append(i);
         return _cleanup((ourgoodoutcome, ourheader,[DodgyGlyphArray, ExcellentGlyphArray],));
-
-if __name__ == '__main__':
-    print(glyphCatcher("", True));
-    content = glyphCatcher("http://themes.googleusercontent.com/static/fonts/robotoslab/v1/y7lebkjgREBJK96VQi37ZobN6UDyHWBl620a-IRfuBk.woff", False); #""http://127.0.0.1:8000/static/glyphviewer/fonts/Essays1743.woff", True);
-    header = content[1];
-    print(header);
-    print(header.urlfontven)
-    print(header.urlfontdes)
-    body = content[2];
-    for i in body:
-        print(i);
- #   content = glyphCatcher("http://127.0.0.1:8000/static/glyphviewer/fonts/Essays1743.woff", False);
- #   body = content[2];
- #   for i in body:
- #       print i;
