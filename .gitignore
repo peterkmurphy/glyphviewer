@@ -1,0 +1,23 @@
+# Bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Packaging / editable installs
+*.egg-info/
+.eggs/
+dist/
+build/
+*.egg
+
+# Virtualenvs / tooling
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Site-local learning symlinks (not part of the published package)
+glyphviewer/static/glyphviewer/fonts/noto-*.woff2

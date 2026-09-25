@@ -3,263 +3,437 @@
 {% block meta_keywords %}font, ttf, otf, woff, glyph, character, Unicode{% endblock %}
 {% block meta_description %}An application to analyse font files.{% endblock %}
 {% block title %}Glyphviewer Documentation{% endblock %}
+{% block extra_css %}
+  <style>.textaligncenter {text-align: center;}
+    .width100 { width: 100%;}
+  </style>
+{% endblock %}
 {% block main %}
-    <h2 id="what">What is Glyphviewer?</h2>
-    <p><strong><a href="/glyphviewer/">Glyphviewer</a></strong> is a web application that analyses web font files.</p>
-    <ul><li>It lists the characters supported by a font using its glyphs.
-    This is the raison d'être for the application.</li>
-<li>It displays information present in the font's header, such as developer and license details.</li>
-<li>It provides a test bed for users to enter their own message, and see it displayed using the font.</li></ul>
-<p id="why"><em>For those unsure about the meaning of &quot;glyph&quot;, &quot;font&quot;, and &quot;web font&quot;,
-a small <a href="#techappendix">glossary</a> is provided at the end.</em></p>
-        <h2 id="usage">Glyphviewer Usage</h2>
-    <p>Glyphviewer analyses font files, not fonts per se. (Computer fonts often consist of multiple files.)
-    There are several formats supported</p>
-    <ul>
+  <h2 id="what">What is Glyphviewer?</h2>
+  <p><strong><a href="{% url "glyphviewer:index" %}">Glyphviewer</a></strong> is a web application that analyses web font files.</p>
+  <ul>
+    <li>
+      It lists the characters supported by a font using its glyphs.
+      This is the raison d'être for the application.
+    </li>
+    <li>It displays information present in the font's header, such as developer and license details.</li>
+    <li>It provides a test bed for users to enter their own message, and see it displayed using the font.</li>
+  </ul>
+  <p id="why">
+    <em>For those unsure about the meaning of &quot;glyph&quot;, &quot;font&quot;, and &quot;web font&quot;,
+    a small <a href="#techappendix">glossary</a> is provided at the end.</em>
+  </p>
+  <h2 id="usage">Glyphviewer Usage</h2>
+  <p>
+    Glyphviewer analyses font files, not fonts per se. Computer fonts often consist of multiple files.
+    There are several formats supported:
+  </p>
+  <ul>
     <li>TrueType (.ttf)</li>
     <li>OpenType (.otf)</li>
-    <li><a href="http://www.w3.org/TR/WOFF/">Web Open Font Format</a> (.woff). This is a font format designed
-        for the web, as font data is compressed by default. Since this results in smaller font sizes, fonts
-        are quicker to download.</li>
-    <li><a href="https://www.w3.org/TR/WOFF2/">Web Open Font Format 2</a> (.woff2), which manages even better
-        compression (and thus even quicker download times). This is a new standard as of March 2018.</li>
-    </ul>
-
-<p>There are two places where font files can be hosted for analysis. </p>
-
-    <ul><li>The default behavior for Glyphviewer is to analyse font files stored on the <strong>Local</strong> server hosting this application.
-
-        When a user first encounters this page, the application
-    randomly selects one from its file system, analyses it, and displays the results to the user. Users can choose other
-    font files stored locally, as long as <strong>Local</strong> is checked; they just select an item
-    from the <strong>File</strong> drop down list. All fonts are listed by file name, so <strong>File</strong>
-    will display (say) &quot;DejaVuSans.woff&quot; rather than &quot;DejaVu Sans&quot;.</li>
-<li>More adventurous users can choose a font somewhere else on the Internet by checking
-<strong>Remote</strong> instead. They write the full URL for the font file (including the extension) in
-the <strong>URL</strong> control. For example, here's an
-<a href="http://themes.googleusercontent.com/static/fonts/lato/v6/9k-RPmcnxYEPm8CNFsH2gg.woff">URL</a>
-for the Lato web font ready for copying-and-pasting. However, the remote font must be accessible for sharing under
-<a href="https://en.wikipedia.org/wiki/Cross-origin_resource_sharing">Cross-origin Resource Sharing</a> (CORS).</li></ul>
-<p>Other controls present are:</p>
-<ul><li><strong>Shows characters in font</strong>: If checked, all characters in the font
-are presented as a table to the user (with the exception of any line breaks and control characters present inside).
-The advantage is that users
-can discover which characters and languages are supported by the font. Moreover, people can inspect
-individual glyphs for legibility and appearance. The disadvantage is that the resulting page can be quite large.</li>
-<li><strong>Arrange characters as Unicode blocks</strong>: If checked, Glyphviewer splits characters into
-different tables according to their Unicode blocks. If not checked, all characters are displayed in one gigantic
-table. If <strong>Shows characters in font</strong> is not selected, this checkbox is ignored altogether.</li></ul>
-<p>To finish, users hit the <strong>Submit</strong> button.</p>
-    <h3 id="success">On Success</h3>
-    <p>If <a href="/glyphviewer/">Glyphviewer</a> succeeds, it will generate a page
-    with the following sections.</p>
-    <ul><li><strong>General information</strong>: This data is taken from the font's header; it generally
-    includes details such as name, designer, and copyright information. The last piece of data is extremely useful
-    to know, as it may indicate whether the font is <em>legally</em> free to use or not.</li>
-      <li><strong>Testbed</strong>: This provides an area where users can play around with the font.
+    <li>
+      <a href="https://www.w3.org/TR/WOFF/">Web Open Font Format</a> (.woff). This is a font format designed
+      for the web, as font data is compressed by default. Since this results in smaller font sizes, fonts
+      are quicker to download.
+    </li>
+    <li>
+      <a href="https://www.w3.org/TR/WOFF2/">Web Open Font Format 2</a> (.woff2), which manages even better
+      compression (and thus even quicker download times). This has been available since 2018.
+    </li>
+  </ul>
+  <p>There are two places where font files can be hosted for analysis.</p>
+  <ul>
+    <li>
+      The default behavior for Glyphviewer is to analyse font files stored on the <strong>Local</strong> server hosting this application.
+      When a user first encounters this page, the application randomly selects one from a particular directory on its file system,
+      (specified below in "Installation and Dependencies"). Glyphviewer will analyse it and display resulting information to the user.
+      Users can choose other font files stored locally, as long as <strong>Local</strong> is checked; they just select an item
+      from the <strong>File</strong> drop down list. All fonts are listed by file name, so <strong>File</strong>
+      will display (say) &quot;DejaVuSans.woff&quot; rather than &quot;DejaVu Sans&quot;.
+    </li>
+    <li>
+      More adventurous users can choose a font somewhere else on the Internet by checking
+      <strong>Remote</strong> instead. They write the full URL for the font file (including the extension) in
+      the <strong>URL</strong> control.
+    </li>
+  </ul>
+  <p>Other controls present are:</p>
+  <ul>
+    <li>
+      <strong>Shows characters in font</strong>: If checked, all characters in the font
+      are presented as a table to the user (with the exception of any line breaks and control characters present inside).
+      The advantage is that users
+      can discover which characters and languages are supported by the font. Moreover, people can inspect
+      individual glyphs for legibility and appearance. The disadvantage is that the resulting page can be quite large.
+    </li>
+    <li>
+      <strong>Arrange characters as Unicode blocks</strong>: If checked, Glyphviewer splits characters into
+      different tables according to their Unicode blocks. If not checked, all characters are displayed in one gigantic
+      table. If <strong>Shows characters in font</strong> is not selected, this checkbox is ignored altogether.
+    </li>
+  </ul>
+  <p>To finish, users hit the <strong>Submit</strong> button.</p>
+  <h3 id="success">On Success</h3>
+  <p>
+    If <a href="{% url "glyphviewer:index" %}">Glyphviewer</a> succeeds, it will generate a page
+    with the following sections.
+  </p>
+  <ul>
+    <li>
+      <strong>General information</strong>: This data is taken from the font's header; it generally
+      includes details such as name, designer, and copyright information. The last piece of data is extremely useful
+      to know, as it may indicate whether the font is <em>legally</em> free to use or not.
+    </li>
+    <li>
+      <strong>Testbed</strong>: This provides an area where users can play around with the font.
       Fields of interest are:
-      <ul><li><strong>Enter some text to try out the font</strong>: This is a multi-line field for changing the message
-      (because &quot;Hello World!&quot; gets boring quickly).</li>
-        <li><strong>Font size (in pixels)</strong>: This sets the size of the message text in pixels.
-        But to actually resize the text, one has to click...</li>
+      <ul>
+        <li>
+          <strong>Enter some text to try out the font</strong>: This is a multi-line field for changing the message
+          (because &quot;Hello World!&quot; gets boring quickly).
+        </li>
+        <li>
+          <strong>Font size (in pixels)</strong>: This sets the size of the message text in pixels.
+          But to actually resize the text, one has to click...
+        </li>
         <li><strong>Try it</strong>: This rewrites and redisplays the message.</li>
         <li><strong>Reset</strong>: This resets the message to the default text and size.</li>
-</ul></li>
-    <li><strong>Supported characters</strong>: if <strong>Shows characters in font</strong> is selected,
-    Glyphviewer will generate a table (or tables) of the characters provided by the font. For maximum utility,
-    characters will be displayed using the actual glyphs in the font, and each character is displayed with
-    its Unicode code point underneath. However, some fonts include characters such as the humble
-    &quot;NULL&quot; (U+0000) which were never intended for display. Rather than writing them to the screen,
-    Glyphviewer lists them instead.</li></ul>
-    <h3 id="failure">On Failure</h3>
-<p>Glyphviewer will display an error message when it fails. There are several reasons for failure.</p>
-<ul><li>The <strong>URL</strong> cannot be resolved to some resource on the Internet.</li>
-<li>The <strong>URL</strong> points to an actual <em>resource</em> on the Interwebs, but it's not a font file.</li>
-<li>The <strong>URL</strong> points to a font file, but it is too &quot;big&quot;. This limitation is deliberate.
-Imagine if some smartarse puts all 22MB of <a href="http://en.wikipedia.org/wiki/Arial_Unicode_MS">Arial Unicode MS</a>
-on their web server, and directed Glyphviewer to analyse it. This would slow down this server. That's why the
-application refuses to read very large files.</li>
-<li>The font is genuine, but essential information such as the header is missing. (This shouldn't happen, as it's
-against the <a href="http://www.microsoft.com/typography/otspec/">specification</a>).</li>
-<li>The font is a <em><a href="http://en.wikipedia.org/wiki/Symbol_%28typeface%29">symbol font</a></em>, a relic
-from the days before Unicode.
-Glyphviewer will refuse to analyse it out of disgust.</li></ul>
-<h3 id="warning">Cross Origin Resource Sharing</h3>
-<p>There is one situation which will result in a <em>warning</em> (rather than an outright failure). It occurs when the user
-attempts to analyse a font from a remote server whose
-<a href="https://en.wikipedia.org/wiki/Cross-origin_resource_sharing">Cross-origin Resource Sharing</a> (CORS)
-policy refuses resources to be served by third-party sites. Glyphviewer will be able to analyse the font's header for information
-such as designer and copyright information. CORS doesn't prevent a resource being accessed by its lonesome. The problem
-will be when Glyphviewer - located on a particular server - tries to display the characters in the font when accessing it from
-a secondary, remote server. Many browsers - such as IE and Firefox - will refuse to display the characters using the font, and
-thus use some "fallback" font for that browser. Since this may mislead users as to the appearance of the font, Glyphviewer
-will warn them about this situation.</p>
-<p>
-Glyphviewer should not encounter this situation when handling remote fonts delivered from
-<a href="https://en.wikipedia.org/wiki/Content_delivery_network">Content Delivery Networks</a> (CDN) such as
-<a href="http://www.google.com/webfonts">Google Fonts</a>. That's because these sites are designed to allow their resources
-to be shared by other sites. There are several ways to do this, but the most common way is to serve them with these particular
-HTTP headers:</p>
-<pre>Access-Control-Allow-Origin: *</pre>
-<p>If Glyphviewer detects these headers when downloading fonts from a remote server, it will assume that the browser can
-display them in the browser, and no warning will be presented to the user. This is not an issue for Glyphviewer when handling
-fonts hosted locally, because obviously the font and the server shares the same domain; CORS would not apply. However, enabling
-CORS on your own server may be useful if you are able to do it, especially when debugging remotely. For example, if you are serving
-your fonts from a nginx server that you control, you could use configuration declarations like the following:</p>
-<pre>
-    location /static/glyphviewer/fonts/ {
-        add_header 'Access-Control-Allow-Origin' "*" always;
-        add_header 'Access-Control-Allow-Credentials' 'true' always;
-        add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, DELETE, OPTIONS' always;
-        add_header 'Access-Control-Allow-Headers' 'Accept,Authorization,Cache-Control,Content-Type,DNT,If-Modified-Since,Keep-Alive,Origin,User-Agent,X-Requested-With' always;
-        if ($request_method = 'OPTIONS') {
-            # Tell client that this pre-flight info is valid for 20 days
-            add_header 'Access-Control-Max-Age' 1728000;
-            add_header 'Content-Type' 'text/plain charset=UTF-8';
-            add_header 'Content-Length' 0;
-            return 204;
-        }
-    }
+      </ul>
+    </li>
+    <li>
+      <strong>Supported characters</strong>: if <strong>Shows characters in font</strong> is selected,
+      Glyphviewer will generate a table (or tables) of the characters provided by the font. For maximum utility,
+      characters will be displayed using the actual glyphs in the font, and each character is displayed with
+      its Unicode code point underneath. However, some fonts include characters such as the humble
+      &quot;NULL&quot; (U+0000) which were never intended for display. Rather than writing them to the screen,
+      Glyphviewer lists them instead.
+    </li>
+  </ul>
+  <h3 id="failure">On Failure</h3>
+  <p>Glyphviewer will display an error message when it fails. There are several reasons for failure.</p>
+  <ul>
+    <li>The <strong>URL</strong> cannot be resolved to some resource on the Internet.</li>
+    <li>The <strong>URL</strong> points to an actual <em>resource</em> on the Interwebs, but it's not a font file.</li>
+    <li>
+      The <strong>URL</strong> points to a font file, but it is too &quot;big&quot;. This limitation is deliberate.
+      Imagine if some smartarse puts all 22MB of <a href="https://en.wikipedia.org/wiki/Arial_Unicode_MS">Arial Unicode MS</a>
+      on their web server, and directs Glyphviewer to analyse it. This would slow down this server. That's why the
+      application refuses to read very large files.
+    </li>
+    <li>
+      The font is genuine, but essential information such as the header is missing. (This shouldn't happen, as it's
+      against the <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/">specification</a>).
+    </li>
+    <li>
+      The font is a <em><a href="https://en.wikipedia.org/wiki/Symbol_%28typeface%29">symbol font</a></em>, a relic
+      from the days before Unicode.
+      Glyphviewer will refuse to analyse it out of disgust.
+    </li>
+  </ul>
+  <h3 id="limitations">Limitations</h3>
+  <p>There are several limitations built into Glyphviewer.</p>
+  <ul>
+    <li>
+      Glyphviewer can only analyse OpenType, TrueType and Web Open Font Format 1 and 2 font files. Other font files such
+      as Embedded OpenType (.eot) and Scalable Vector Graphics (.svg) cannot be handled by this application.
+    </li>
+    <li>The application has a font size limitation built in of 3 MB.</li>
+    <li>The application will time out after 120 seconds when loading a font.</li>
+    <li>
+      The application may be slow when analyzing a remote font, as the server has to access it to create a
+      temporary copy.
+    </li>
+  </ul>
+  <p>
+    Versions 0.3 and below of Glyphviewer could only show glyphs for characters from the
+    <a href="https://www.unicode.org/roadmaps/bmp/">Basic Multilingual Plane</a> (U+0000 to U+FFFF). Characters out
+    of this range were not displayed. Fortunately, this limitation has been removed from Glyphviewer as of version 0.4 (2016).
+  </p>
+  <p>
+    Earlier versions of Glyphviewer - 0.8 and below - had issues if the user attempted to analyse a font from a remote server whose
+    <a href="https://en.wikipedia.org/wiki/Cross-origin_resource_sharing">Cross-origin Resource Sharing</a> (CORS)
+    policy refused resources to be served by third-party sites. Glyphviewer was able to analyse the font's header for information
+    such as designer and copyright information. CORS didn't prevent a resource being accessed by its lonesome. The problem
+    was when Glyphviewer - located on a particular server - tried to display the characters in the font when accessing it from
+    a secondary, remote server. Many browsers - such as Chrome and Firefox - refused to display the characters using the font, and
+    thus used some "fallback" font for that browser. Since this may have misled users as to the appearance of the font, Glyphviewer
+    warned them about this situation. Fortunately, this limitation has been removed from Glyphviewer as of version 0.9 (2026).
+  </p>
+  <h2 id="install">Installation and Dependencies</h2>
+  <p>If you have Python, the quickest way to install Glyphviewer (and its dependencies) is via the following command:</p>
+  <pre>pip install glyphviewer</pre>
+  <h3>Setting up</h3>
+  <p>
+    Once installed, add <code>"glyphviewer"</code> to your <code>INSTALLED_APPS</code> list in <code>settings.py</code>,
+    and add the desired URL in one of the <code>urls.py</code> files.
+  </p>
+  <pre><code class="language-python"># urls.py
+from django.urls import include, path
 
-</pre>
-<p>CORS - although a hindrance to Glyphviewer - is generally a good thing. It can be problematic if a "resource" such as a hostile
-piece of JavaScript is injected into a page from a third party website. That's why some browsers (such as Firefox and IE) refuse to
-load resources from third party websites unless certain criteria are met.</p> 
-<p>For more information on CORS, please see <a href="https://enable-cors.org/">enable cross-origin resource sharing</a>, especially if
-    you want to add CORS support to your webserver. You could also look at the <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS">Mozilla Developer 
-        Network</a> article on the subject.</p>
-
-    <h3 id="limitations">Limitations</h3>
-    <p>Apart from issues arising from CORS, these are several limitations built in to Glyphviewer.</p>
-    <ul><li>Glyphviewer can only analyse OpenType, TrueType and Web Open Font Format 1 and 2 font files. Other font files such
-    as Embedded OpenType (.eot) and Scalable Vector Graphics (.svg) cannot be handled by this application.
-    <li>The application has a font size limitation built in (as stated before).</li>
-    <li>The application may be slow when analyzing a remote font, as the server has to access it to create a
-    temporary copy.</li></ul>
-<p>Earlier versions had a serious limitation. The application could only show glyphs for characters from the
-    <a href="http://www.unicode.org/roadmaps/bmp/">Basic Multilingual Plane</a> (U+0000 to U+FFFF). Characters out
-    of this range were not displayed. Fortunately, this limitation has been removed from Glyphviewer as of version 0.4 (2016).</p>
-
-<h2 id="install">Installation and Dependencies</h2>
-</ul>
-   <p>If you have Python, the quickest way to install Glyphviewer (and its dependencies) is via the following command:</p>
-   <pre>pip install glyphviewer</pre>
-<p>The next stage is to add "glyphviewer" to your INSTALLED_APPS list in settings.py. The stage after that is to add then
-desired URL to one of the urls.py files.</p>
-<p>The final stage is to populate the directory with fonts where you display your chosen font or fonts. The Glyphviewer
-application comes with its own set of fonts adapted from the
-<a href="https://savannah.gnu.org/projects/freefont/">Free UCS Outline Fonts</a>; they have been converted to
-WOFF form for quicker download. These can be moved into the correct directory via the following shell command:</p>
-<pre>python manage.py collectstatic</pre>
-<p>The font files wil then be moved into the <code>{STATIC_ROOT}/glyphviewer/fonts/</code> directory, and the browser will read
-the files from the <code>{STATIC_URL}/glyphviewer/fonts/</code> folder.</p>
-<p><em>Note: it is not mandatory to run the collectstatic command. However, if there are no font files in the above directory,
-then Glyphviewer will only be able to read remote files.</em></p>
-<p>The HTML template files in this application have been
-redesigned to work with the <a href="http://mezzanine.jupo.org/">Mezzanine</a> CMS. The
-redesign removed any explicit references to particular stylesheets found with earlier versions.
-The app (and the fonts) are released under a <a href="http://www.gnu.org/copyleft/gpl.html">GNU general public license</a>.
-If you wish to do any changes,
-pop over to the <a href="https://github.com/peterkmurphy/glyphviewer">GitHub repository</a> for the app.</p>
-<p><strong>Glyphviewer</strong> (as of version 0.8 and beyond) depends on the following software:</p>
-<ul><li><a href="http://www.python.org/">Python</a> 3.x</li>
-<li><a href="http://www.djangoproject.com/">Django</a> 2.x or later</li>
-<li>The <a href="https://github.com/behdad/fonttools">FontTools</a> package for parsing
-TrueType, OpenType, and WOFF files.</li>
- <li><a href="http://sourceforge.net/projects/numpy/">Numerical Python (numpy)</a>, which is used by FontTools.</li>
- <li><a href="https://github.com/google/brotli">Brotli</a>, a package which handles the compression algorithm used
-     by WOFF2.</li>
-     <li><a href="https://pypi.org/project/chardet/">Chardet</a>, the universal character encoding detector. Font header
-    information often stored in binary form, and chardet assists in picking the 'best' decoding for representing
-this information as a string.</li>   
-    </ul>
-     <p><em>Note: earlier versions of <strong>Glyphviewer</strong> depended on
-     <a href="https://github.com/typesupply/woffTools">WoffTools</a>, a package (built on top of FontTools)
-     for parsing WOFF files. However, FontTools has WOFF support, and WoffTools has not been worked on for several years,
-     so this dependency has been removed. Earlier versions of <strong>Glyphviewer</strong> also required Numerical Python
+urlpatterns = [
+    path("this_is_the_path_to_glyphviewer/", include("glyphviewer.urls")),
+]
+</code></pre>
+  <p>This provides three routes:</p>
+  <table class="width100">
+    <thead>
+      <tr>
+        <th>Path</th>
+        <th>Name</th>
+        <th>Role</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>…/</code></td>
+        <td>(index)</td>
+        <td>Form and analysis</td>
+      </tr>
+      <tr>
+        <td><code>…/doc/</code></td>
+        <td></td>
+        <td>In-app documentation</td>
+      </tr>
+      <tr>
+        <td><code>…/font/</code></td>
+        <td><code>glyphviewer:font-proxy</code></td>
+        <td>Same-origin serve of remote fonts</td>
+      </tr>
+    </tbody>
+  </table>
+  <p/>
+  <p>The <code>font/</code> route is explained more in <strong>Remote fonts, the same-origin policy, and CORS</strong> below.</p>
+  <h3>Adding local fonts (including symbolic links)</h3>
+  <p>
+    Glyphviewer’s <strong>Local</strong> dropdown lists every <code>*.ttf</code>, <code>*.otf</code>, <code>*.woff</code>, and <code>*.woff2</code>
+    file it finds in the <code>{STATIC_ROOT}/glyphviewer/fonts/</code> directory. You can:
+  </p>
+  <ul>
+    <li>Copy any font files into that directory; or,</li>
+    <li>
+      Add symbolic links that point at fonts stored elsewhere on the same file system. Fonts from
+      other directories are not normally accessible by Glyphviewer, but it will
+      follow symbolic links created in <code>{STATIC_ROOT}/glyphviewer/fonts/</code> that lead to font files
+      elsewhere on your machine.
+    </li>
+  </ul>
+  <p>Either way, your browser will list these fonts as coming from the <code>{STATIC_URL}/glyphviewer/fonts/</code> folder.</p>
+  <p>
+    Glyphviewer already comes with its own set of fonts from the
+    <a href="https://savannah.gnu.org/projects/freefont/">Free UCS Outline Fonts</a>.
+    Those bundled fonts remain under their own GPL terms; the Glyphviewer application
+    code is BSD-3-Clause. In production, they can be moved into the correct directory via:
+  </p>
+  <pre><code class="language-bash">python manage.py collectstatic
+</code></pre>
+  <h3>Remote fonts, the same-origin policy and CORS</h3>
+  <p>
+    Glyphviewer’s <strong>Remote</strong> text field allows the user to provide a full URL of a remote font. For
+    earlier versions of Glyphviewer - 0.8 and before - the application could <em>download</em> remote fonts. It
+    could even analyse them for their header information and the characters they supported. The problem
+    was that the browser could not generally download the font to <em>display</em> it as it was designed.
+  </p>
+  <p>
+    The reason for this is that web browsers enforce the
+    <a href="https://developer.mozilla.org/en-US/docs/Web/Security/Defenses/Same-origin_policy">Same-origin policy</a>:
+    resources from one website are generally restricted from being used in another website unless
+    <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS">Cross-Origin Resource Sharing</a> is enabled
+    on the source website.
+  </p>
+  <p>
+    Some websites, such as <a href="https://fonts.google.com/">Google Fonts</a>, are happy to share their
+    fonts directly with others. When these files are downloaded, they are downloaded with these
+    HTTP response headers that say CORS is permitted.
+  </p>
+  <pre><code class="language-http">access-control-allow-origin: *
+</code></pre>
+  <p>
+    The asterisk means that requesting code from any origin can access the resource. So this means
+    that you can embed the font in your site, and everyone is happy.
+  </p>
+  <p>
+    Not everyone has the budget that Google does. Some websites may use their own proprietary font
+    that they spent a lot of money on. So when your website (or Glyphviewer 0.8 or before) tries to
+    access it in the site, it will almost certainly not be sent with those <code>access-control-allow-origin</code>
+    headers. That means CORS is not enabled, and the browser will refuse to display it as it was designed.
+    Instead, the browser will use a fallback font for the user's browser and operating system instead;
+    you are expecting <em>Roboto</em>, but it is displayed as <em>Arial</em> or <em>Helvetica</em>. Since
+    this may mislead users as to the appearance of the font, Glyphviewer would then warn them about the
+    situation.
+  </p>
+  <p>
+    (The
+    <em>Same-origin policy</em> was originally intended for JavaScript; enforcement would reduce the
+    number of malicious scripts executed on a webpage. But when
+    <a href="https://drafts.csswg.org/css-fonts-3/#same-origin-restriction">Web fonts</a> were introduced, the
+    <em>Same-origin policy</em> also applied to fonts accessed by CSS <code>@font-face</code> rules in your webpages.)
+  </p>
+  <p>
+    Version 0.9 of Glyphviewer overcomes this limitation: it introduces a proxy for web fonts. The
+    web page creates a same-origin URL that goes through Glyphviewer’s font proxy; to the browser, it
+    appears that the font is local, and so CORS permits the font to be loaded. To give more detail:
+  </p>
+  <ol>
+    <li>The user submits a remote font URL, using either the HTTP or HTTPS schemes;</li>
+    <li>The index view sets <code>fontpath</code> to <code>/this_is_the_path_to_glyphviewer/font/?url=&lt;urlencoded-remote-url&gt;</code>;</li>
+    <li>The HTML template’s <code>@font-face</code> refers to that same-origin URL; and,</li>
+    <li>
+      The <code>font-proxy</code> view - <code>glyphviewer:font-proxy</code> - downloads the remote file
+      with <code>fetch_remote_font()</code> in <code>font_fetch.py</code>, and with an appropriate <code>Content-Type</code>. This
+      could be <code>font/woff2</code>, <code>font/woff</code>, <code>font/otf</code>, or <code>font/ttf</code>.
+    </li>
+  </ol>
+  <h3>Safety limits</h3>
+  <p>All font fetches are capped by size (3 MB) and timeout (120s).</p>
+  <p>
+    The proxy is not an open relay. Before fetching, <code>validate_remote_font_url()</code>
+    rejects:
+  </p>
+  <ul>
+    <li>Schemes other than <code>http</code> / <code>https</code>;</li>
+    <li>URLs with embedded credentials;</li>
+    <li>Hostnames such as <code>localhost</code>, <code>*.local</code>, <code>*.internal</code>; and,</li>
+    <li>Private, loopback, link-local, and other non-public addresses.</li>
+  </ul>
+  <p><strong>Glyphviewer</strong> (as of version 0.9 and beyond) depends on the following software:</p>
+  <ul>
+    <li><a href="https://www.python.org/">Python</a> 3.x</li>
+    <li><a href="https://www.djangoproject.com/">Django</a> 5.2 or later</li>
+    <li>
+      The <a href="https://github.com/behdad/fonttools">FontTools</a> package (4.x or later) for parsing
+      TrueType, OpenType, and WOFF files.
+    </li>
+    <li><a href="https://pypi.org/project/numpy/">Numerical Python (numpy)</a> 2.x or later, which is used by FontTools.</li>
+    <li>
+      <a href="https://github.com/google/brotli">Brotli</a> 1.x or later, a package which handles the compression algorithm used
+      by WOFF2.
+    </li>
+    <li>
+      <a href="https://pypi.org/project/chardet/">Chardet</a> 7.x or later, the universal character encoding detector. Font header
+      information is often stored in binary form, and chardet assists in picking the 'best' decoding for representing
+      this information as a string.
+    </li>
+  </ul>
+  <p>
+    <em>Note: earlier versions of <strong>Glyphviewer</strong> depended on
+      <a href="https://github.com/typesupply/woffTools">WoffTools</a>, a package (built on top of FontTools)
+      for parsing WOFF files. However, FontTools has WOFF support, and WoffTools has not been worked on for several years,
+      so this dependency has been removed. Earlier versions of <strong>Glyphviewer</strong> also required Numerical Python
       (numpy) to be installed "by hand", since there were problems installing it with "pip". Fortunately, "pip install
-      glyphviewer" will now provide all dependencies automatically.</em></p>
-
-<h2>Why Glyphviewer?</h2>
-    <p>I created Glyphviewer as a tool to examine the character repetoire of web fonts. It is easy to find
+    glyphviewer" will now provide all dependencies automatically.</em>
+  </p>
+  <h2>Why Glyphviewer?</h2>
+  <p>
+    I created Glyphviewer as a tool to examine the character repertoire of web fonts. It is easy to find
     fonts online; it is harder to find out exactly what characters they support. Almost all contain standard
     capital letters like &quot;A&quot;, &quot;B&quot; and &quot;C&quot;, and that's not hard to discover,
     because those are among the first characters to be advertised by the foundries. It's harder to find out
     how much support a font has for more <em>unusual</em> characters like (say) &quot;ŋ&quot;. One could
     install individual fonts on the computer, and inspect each in a tool like &quot;Character Map&quot;, but this is
-    laborous and time-wasting.</p>
-    <p>So I created a tool that could analyse a font if it was located somewhere on
+    laborious and time-wasting.
+  </p>
+  <p>
+    So I created a tool that could analyse a font if it was located somewhere on
     the World Wide Web. Font makers often display their fonts using web pages, and even provide a place
     where people can type text and see it displayed using the typeface. All one has to do to analyse it is examine the
-    attached cascading stylesheet for a link to the font file, and place its URL in Glyphviewer.</p>
-<p>This application was designed in response to and <b>in reaction to</b>
-<a href="http://www.google.com/webfonts">Google Fonts</a>, which came out in 2011. The idea is wonderful: tens of web fonts available
-for access and download. A laudatory effort - except that <i>it doesn't accurately show the full repertoire of
-characters for each font</i>. Take <a href="http://www.google.com/webfonts/family?family=Lato">Lato</a> - a
-lovely font, and comes in 10 variants too. Now look at the
-<a href="http://www.google.com/fonts/specimen/Lato#charset">character set Google
-Web Fonts</a> displays for it. At the time, I was frustrated that "Ł" and "ł" were not displayed, even though the font
-supports them, and even though the creator goes by the name of <a href="http://www.typoland.com/">Łukasz Dziedzic</a>.
-<em>Now</em> Google Fonts displays them, but it took Google a couple of years to lift their game.</p>
-<h2>Acknowledgements</h2>
-<p>The primary inspiration for this is
-<a href="http://en.wikipedia.org/wiki/Mark_Pilgrim_%28software_developer%29">Mark Pilgrim</a>, who wrote
-a blog post called <a href="https://web.archive.org/web/20090422173924/http://diveintomark.org/archives/2009/04/21/fuck-the-foundries">Fuck
-the foundries</a> in 2009 (before yanking it off the net two years later). His
-essay and/or rant got me interested in web fonts in the first place, as did his use of the utterly superb web font
-<a href="http://www.thibault.org/fonts/essays/">Essays 1743</a> in
-<a href="http://diveintohtml5.org/">Dive into HTML5</a>.
-Thanks to <a href="http://www.thibault.org/newhome/">John Stracke</a> for coming up with the &quot;Essays&quot;
-typeface in the first place.</p>
-<p>I also have to acknowledge the developers of the libraries used in the making of Glyphviewer.
-A special shout out goes to the folk at <a href="http://www.typesupply.com/">TypeSupply</a> who decided to
-<a href="http://code.typesupply.com/">open-source their code</a> for WoffTools. The project wouldn't have been possible without them.
-I must also acknowledge the
-<a href="https://savannah.gnu.org/projects/freefont/">Free UCS Outline Fonts</a> project for providing
-the fonts used in this application.</p>
-<h2>History</h2>
-<ul>
-<li>0.1 (June 11th 2011) - Initial release. </li>
-<li>0.2 (June 28th 2013) - Added setup script to create a PyPI package. Removed bugs.</li>
-<li>0.3 (February 15th 2014) - Made compatible with Mezzanine and Bootstrap, changed
-                               styles for errors, now handles empty local directories.</li>
-<li>0.4 (January 16th 2016) - Now handles cases where remote fonts are inaccessible
-using CORS; removed the limitation that restricted characters to the BMP; added
-documentation for above.</li>
-<li>0.5 (March 31st 2017) - Updated to be compatible with Django 1.10. Now automatically
-                    install dependencies using pip</li>
-<li>0.6 (March 18th 2018) - Add WOFF2 compatibility.</li>
-<li>0.7 (December 6th 2020) - Updated for Python 3 compatibility.</li>
-<li>0.8 (December 10th 2020) - Better representation of font header information as text; better use of urllib for Python 3.</li>
-</ul>
-    <h2 id="techappendix">Glossay</h2>
-    <dl>
-    <dt><dt>Font</dt><dd>A file, or a set of files, that is used to specify the appearance of computer text.
-    Common Windows
-    fonts are &quot;Times New Roman&quot;, &quot;Arial&quot; and &quot;Courier New&quot;;
-    Mac OS X and Linux have their own equivalents. The
-    "Times New Roman" font consists of 4 files: one for representing regular text,
-    <strong>one for Bold text</strong>, <em>one for Italic text</em> and
-    <strong><em>one for Bold Italic text</em></strong>.</dd>
-    <dt>Web font</dt><dd>A font that is designed to be downloaded with a web page <em>only for the
-    purpose of viewing it</em>, and then discarded afterwards. Historically, most web designers assumed
-    that users had a limited repertoire of fonts already installed on their machine, and would style
-    accordingly. For example, it would be a safe bet to have either Helvetica or Arial on the viewer's
-    computer, and if not, there would be some sort of <a href="https://en.wikipedia.org/wiki/Sans-serif">sans-serif</a>
-    equivalent available instead.
-    One problem with this is that it gets boring to see the same fonts
-    all the time. So the W3C had a sit down with industry folk from Microsoft and Adobe and Mozilla and
-    other companies, and worked out their own <a href="http://www.w3.org/TR/css3-fonts/">technology
-    for embedding fonts</a> on the fly.</dd>
-    <dt>Glyph</dt><dd>Glyphs are the shapes used to represent characters in a font.
-    For example, the character &quot;I&quot; is (more or less) shaped a horizontal line - in contrast to
-    an &quot;o&quot; character, which resembles (roughly) a hollow circle. Terms like &quot;more or less&quot; and
-    &quot;roughly&quot; are used here, because the same character would be generally represented by different
-    glyphs in different fonts, and <em>even within them</em>. Continuing the example above, an
-    &quot;<em>I</em>&quot; in a italic version of a font would be inclined relative to a regular
-    version of &quot;I&quot;, while an &quot;I&quot; in a <a href="http://en.wikipedia.org/wiki/Serif">serif</a> font would have serifs coming out at the front
-    and the bottom. In short, there are many ways to create a glyph for the same characters.</dd>
-    </dl>
- <p style="text-align: center;"><em>Copyright © <a href="/">Peter Murphy</a>
-2011-{% now "Y" %}.</em></p>
+    attached cascading stylesheet for a link to the font file, and place its URL in Glyphviewer.
+  </p>
+  <p>
+    This application was designed in response to and <b>in reaction to</b>
+    <a href="https://fonts.google.com/">Google Fonts</a>, which came out in 2011. The idea is wonderful: tens of web fonts available
+    for access and download. A laudatory effort - except that <i>it didn't often accurately show the full repertoire of
+    characters for each font</i>. Take <a href="https://fonts.google.com/specimen/Lato">Lato</a> - a
+    lovely font, and comes in 10 variants too. Now look at the
+    <a href="https://fonts.google.com/specimen/Lato">character set Google
+      Web Fonts</a> displays for it. At the time, I was frustrated that "Ł" and "ł" were not displayed, even though the font
+    supports them, and even though the creator goes by the name of <a href="https://www.typoland.com/">Łukasz Dziedzic</a>.
+    <em>Now</em> Google Fonts displays them, but it took Google a couple of years to lift their game.
+  </p>
+  <h2>Acknowledgements</h2>
+  <p>
+    The primary inspiration for this is
+    <a href="https://en.wikipedia.org/wiki/Mark_Pilgrim_%28software_developer%29">Mark Pilgrim</a>, who wrote
+    a blog post called <a href="https://web.archive.org/web/20090422173924/http://diveintomark.org/archives/2009/04/21/fuck-the-foundries">Fuck
+    the foundries</a> in 2009 (before yanking it off the net two years later). His
+    essay and/or rant got me interested in web fonts in the first place, as did his use of the utterly superb web font
+    <a href="https://www.thibault.org/fonts/essays/">Essays 1743</a> in
+    <a href="https://diveintohtml5.info/">Dive into HTML5</a>.
+    Thanks to <a href="https://www.thibault.org/newhome/">John Stracke</a> for coming up with the &quot;Essays&quot;
+    typeface in the first place.
+  </p>
+  <p>
+    I also have to acknowledge the developers of the libraries used in the making of Glyphviewer.
+    A special shout out goes to the folk at <a href="https://www.typesupply.com/">TypeSupply</a> who decided to
+    open-source their code for WoffTools. The project wouldn't have been possible without them.
+    I must also acknowledge the
+    <a href="https://savannah.gnu.org/projects/freefont/">Free UCS Outline Fonts</a> project for providing
+    the default fonts used in this application.
+  </p>
+  <h2>History</h2>
+  <ul>
+    <li>0.1 (June 11th 2011) - Initial release.</li>
+    <li>0.2 (June 28th 2013) - Added setup script to create a PyPI package. Removed bugs.</li>
+    <li>
+      0.3 (February 15th 2014) - Made compatible with Mezzanine and Bootstrap, changed
+      styles for errors, now handles empty local directories.
+    </li>
+    <li>
+      0.4 (January 16th 2016) - Now handles cases where remote fonts are inaccessible
+      using CORS; removed the limitation that restricted characters to the BMP; added
+      documentation for above.
+    </li>
+    <li>
+      0.5 (March 31st 2017) - Updated to be compatible with Django 1.10. Now automatically
+      install dependencies using pip.
+    </li>
+    <li>0.6 (March 18th 2018) - Add WOFF2 compatibility.</li>
+    <li>0.7 (December 6th 2020) - Updated for Python 3 compatibility.</li>
+    <li>0.8 (December 10th 2020) - Better representation of font header information as text; better use of urllib for Python 3.</li>
+    <li>
+      0.9 (September 25th 2026) - Same-origin remote-font proxy for preview (CORS bypass); ship glyph table / preview styles as package
+      static CSS; add tests; migrate README to Markdown; clarify app license as BSD-3-Clause (bundled FreeFonts remain GPL);
+      align copyright years and changelogs.
+    </li>
+  </ul>
+  <h2 id="techappendix">Glossary</h2>
+  <dl>
+    <dt>Font</dt>
+    <dd>
+      A file, or a set of files, that is used to specify the appearance of computer text.
+      Common Windows
+      fonts are &quot;Times New Roman&quot;, &quot;Arial&quot; and &quot;Courier New&quot;;
+      Mac OS X and Linux have their own equivalents. The
+      "Times New Roman" font consists of 4 files: one for representing regular text,
+      <strong>one for Bold text</strong>, <em>one for Italic text</em> and
+      <strong><em>one for Bold Italic text</em></strong>.
+    </dd>
+    <dt>Web font</dt>
+    <dd>
+      A font that is designed to be downloaded with a web page <em>only for the
+      purpose of viewing it</em>, and then discarded afterwards. Historically, most web designers assumed
+      that users had a limited repertoire of fonts already installed on their machine, and would style
+      accordingly. For example, it would be a safe bet to have either Helvetica or Arial on the viewer's
+      computer, and if not, there would be some sort of <a href="https://en.wikipedia.org/wiki/Sans-serif">sans-serif</a>
+      equivalent available instead.
+      One problem with this is that it gets boring to see the same fonts
+      all the time. So the W3C had a sit down with industry folk from Microsoft and Adobe and Mozilla and
+      other companies, and worked out their own <a href="https://www.w3.org/TR/css3-fonts/">technology
+      for embedding fonts</a> on the fly.
+    </dd>
+    <dt>Glyph</dt>
+    <dd>
+      Glyphs are the shapes used to represent characters in a font.
+      For example, the character &quot;I&quot; is (more or less) shaped like a horizontal line - in contrast to
+      an &quot;o&quot; character, which resembles (roughly) a hollow circle. Terms like &quot;more or less&quot; and
+      &quot;roughly&quot; are used here, because the same character would be generally represented by different
+      glyphs in different fonts, and <em>even within them</em>. Continuing the example above, an
+      &quot;<em>I</em>&quot; in an italic version of a font would be inclined relative to a regular
+      version of &quot;I&quot;, while an &quot;I&quot; in a <a href="https://en.wikipedia.org/wiki/Serif">serif</a> font
+      would have serifs coming out at the front
+      and the bottom. In short, there are many ways to create a glyph for the same character.
+    </dd>
+  </dl>
+  <p class="textaligncenter">
+    <em>Copyright © <a href="/">Peter Murphy</a>
+    2011-{% now "Y" %}. Application code BSD-3-Clause; bundled FreeFonts remain GPL.</em></p>
 {% endblock %}

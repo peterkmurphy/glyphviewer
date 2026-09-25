@@ -1,0 +1,76 @@
+/* Glyphviewer character grid and sample preview. */
+
+table.glyphtable {
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  width: 100%;
+}
+
+table.glyphtable td {
+  border: 1px solid rgba(0, 0, 0, 0.125);
+  padding: 0.5rem;
+  vertical-align: top;
+}
+
+table.glyphtable td.glyphtd {
+  text-align: center;
+}
+
+table.glyphtable caption,
+.glyphcaption {
+  background-color: var(--light, #f8f9fa);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+  caption-side: top;
+  color: #212529;
+  display: table-caption;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 0.65rem 0.75rem;
+  text-align: center;
+  width: 100%;
+}
+
+.glyphchar {
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.glyphnum {
+  margin-top: 0.25rem;
+  font-size: 0.75rem;
+  color: #6c757d;
+}
+
+pre.glyphchar {
+  /* Do not set font-family here: the page @font-face ("OurFontOfNote") must win
+     so the testbed and glyph grid show the selected font, not monospace. */
+  border-radius: 0.25rem;
+  border: 1px solid rgba(0, 0, 0, 0.125);
+  overflow-x: auto;
+  padding: 1rem;
+}
+
+pre.glyphchar.success {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+body.theme-dark table.glyphtable {
+  border-color: rgba(255, 255, 255, 0.28);
+}
+
+body.theme-dark table.glyphtable th,
+body.theme-dark table.glyphtable td {
+  border: 1px solid rgba(255, 255, 255, 0.28);
+}
+
+body.theme-dark table.glyphtable caption,
+body.theme-dark .glyphcaption {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-bottom-color: rgba(255, 255, 255, 0.28);
+  color: rgba(255, 255, 255, 0.95);
+}
+
+body.theme-dark .glyphnum {
+  color: rgba(255, 255, 255, 0.7);
+}

@@ -1,33 +1,21 @@
-#!/usr/bin/python
-#-*- coding: UTF-8 -*-
 # File: glyphtable.py
 # Goal - to provide a nice template tag to represent tables of glyphs.
-# Copyright (C) 2013-2020 Peter Murphy <peterkmurphy@gmail.com>
+# Copyright (c) 2011-2026 Peter Murphy <peterkmurphy@gmail.com>
 #
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# Redistribution and use permitted under the BSD-3-Clause terms in LICENSE.txt.
 
 
-from ..glyphviewer import glyphCatcher, glyphArray, fontHeader, DODGY;
-from django import template;
+from django import template
 from django.utils.safestring import mark_safe
+
+from ..glyphviewer import DODGY
 
 DEFAULT_GLYPHTABLE_SIZE = 16; # 16 is a nice round number.
 
 # The following constants are nice for interpolation.
 
 TABSUM = "<table style=\"table-layout: fixed; width:100%;\" class=\"glyphtable table-bordered table-styled\">\n";
-TABCAP = "<caption class=\"glyphcaption\"><strong>%s</strong></caption>\n<tbody \
+TABCAP = "<caption class=\"glyphcaption text-center\"><strong>%s</strong></caption>\n<tbody \
 class=\"glyphtbody\">\n";
 
 #TABCAP = u"<thead><tr><th rowspan=\"8\">%s</th></tr></thead>\n<tbody \
@@ -69,7 +57,7 @@ def glyphtable(value, arg = DEFAULT_GLYPHTABLE_SIZE):
             output += "For that reason, they are represented separately.</em></p>\n";
             output += "<ul>\n";
             for i in value.codePoints:
-                output += "<li>U+%04X</li>\n" % i;
+                output += f"<li>U+{i:04X}</li>\n";
             output += "</ul>\n";
             return mark_safe(output);
 
@@ -106,7 +94,7 @@ def glyphtable(value, arg = DEFAULT_GLYPHTABLE_SIZE):
 
 # And if it all turns to shit...
 
-    except:
+    except Exception:  # noqa: BLE001 - template tag must never raise into pages
         return "";
 glyphtable.is_safe = False
 

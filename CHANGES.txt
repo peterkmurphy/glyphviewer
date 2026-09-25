@@ -8,6 +8,10 @@ v0.4, 16/01/2016 -- Now handles cases where remote fonts are inaccessible using 
 v0.5, 31/03/2017 -- Updated to be compatible with Django 1.10. Now automatically
                     install dependencies using pip.
 v0.6, 18/03/2018 -- Added WOFF2 compatibility.
-v0.7, 06/12/2020 -- Updated for Python 3 compatibility.                   
+v0.7, 06/12/2020 -- Updated for Python 3 compatibility.
 v0.8, 10/12/2020 -- Better representation of font header information as text; better
                     use of urllib for Python 3.
+v0.9, 25/09/2026 -- Same-origin remote-font proxy for preview (CORS bypass); ship
+                    glyph table / preview styles as package static CSS; add tests;
+                    migrate README to Markdown; clarify app license as BSD-3-Clause
+                    (bundled FreeFonts remain GPL); align copyright years and changelogs.

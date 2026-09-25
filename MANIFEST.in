@@ -1,4 +1,3 @@
-include *.txt 
-include *.rst
-recursive-include glyphviewer/templates/glyphviewer *
-recursive-include glyphviewer/static/glyphviewer *
+include *.txt
+include README.md
+global-exclude noto-*.woff2

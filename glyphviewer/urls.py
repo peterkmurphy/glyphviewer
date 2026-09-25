@@ -1,22 +1,16 @@
-#!/usr/bin/python
-#-*- coding: UTF-8 -*-
-# File: urls.py
-# Copyright (C) 2013-2020 Peter Murphy <peterkmurphy@gmail.com>
+# Glyphviewer: a tool to examine web fonts online.
+# Copyright (c) 2011-2026 Peter Murphy <peterkmurphy@gmail.com>
 #
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# Redistribution and use permitted under the BSD-3-Clause terms in LICENSE.txt.
 
-from django.conf.urls import url, include
-from .views import index as glyphindex, doc as glyphdoc
+from django.urls import path
 
-urlpatterns =[ url(r'^$', glyphindex), url(r'^doc/$', glyphdoc),]
+from glyphviewer.views import doc, font_proxy, index
+
+app_name = "glyphviewer"
+
+urlpatterns = [
+    path("", index, name="index"),
+    path("doc/", doc, name="doc"),
+    path("font/", font_proxy, name="font-proxy"),
+]

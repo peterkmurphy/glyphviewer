@@ -1,34 +1,22 @@
-#!/usr/bin/python
-#-*- coding: UTF-8 -*-
 # File: blocks.py
 # Solely for identifying Unicode blocks for unicode characters.
 # Based on code from:
 # http://stackoverflow.com/questions/243831/unicode-block-of-a-character-in-python
 # But updated for 2013.
-# Copyright (C) 2013-2020 Peter Murphy <peterkmurphy@gmail.com>
+# Copyright (c) 2011-2026 Peter Murphy <peterkmurphy@gmail.com>
 #
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# Redistribution and use permitted under the BSD-3-Clause terms in LICENSE.txt.
 
-import re;
+import re
 
-PRIV_USE_BLOCK = 151;
+PRIV_USE_BLOCK = 151
 
 # If fonts characters are not in an assigned block, then they are assigned to the
 # Private Use Area by default.
 
+
 def block(ch):
-    '''
+    """
     Return the Unicode block name for ch, or None if ch has no block.
 
     >>> block(u'a')
@@ -36,58 +24,65 @@ def block(ch):
     >>> block(unichr(0x0b80))
     'Tamil'
     >>> block(unichr(0xe0080))
-    '''
+    """
 
-    assert isinstance(ch, str) and len(ch) == 1, repr(ch);
-    cp = ord(ch);
+    assert isinstance(ch, str) and len(ch) == 1, repr(ch)
+    cp = ord(ch)
     for start, end, name in _blocks:
         if start <= cp <= end:
-            return name;
+            return name
+
 
 def blockbyint(intval):
     for start, end, name in _blocks:
         if start <= intval <= end:
-            return name;
+            return name
+
 
 def namefromindex(ith):
-    ''' Returns the name of the ith block. '''
-    return _blocks[ith][2];
+    """Returns the name of the ith block."""
+    return _blocks[ith][2]
+
 
 def indexfromname(name):
-    ''' Returns the index of a block name. '''
+    """Returns the index of a block name."""
     if name:
-        return _blockmap[name];
+        return _blockmap[name]
     else:
-        return PRIV_USE_BLOCK;
+        return PRIV_USE_BLOCK
+
 
 def numblocks():
-    ''' Gets the number of blocks. '''
-    return _blocksize;
+    """Gets the number of blocks."""
+    return _blocksize
+
 
 def _initBlocks(text):
-    global _blocks, _blockmap, _blocksize;
-    _blocks = [];
-    _blockmap = {};
-    iter = 0;
-    pattern = re.compile(r'([0-9A-F]+)\.\.([0-9A-F]+);\ (\S.*\S)')
+    global _blocks, _blockmap, _blocksize
+    _blocks = []
+    _blockmap = {}
+    iter = 0
+    pattern = re.compile(r"([0-9A-F]+)\.\.([0-9A-F]+);\ (\S.*\S)")
     for line in text.splitlines():
         m = pattern.match(line)
         if m:
             start, end, name = m.groups()
             _blocks.append((int(start, 16), int(end, 16), name))
-            _blockmap[name] = iter;
-            iter += 1;
-    _blocksize = len(_blocks);
+            _blockmap[name] = iter
+            iter += 1
+    _blocksize = len(_blocks)
+
 
 # retrieved from http://unicode.org/Public/UNIDATA/Blocks.txt
-_initBlocks('''
-# Blocks-13.0.0.txt
-# Date: 2019-07-10, 19:06:00 GMT [KW]
-# © 2019 Unicode®, Inc.
-# For terms of use, see http://www.unicode.org/terms_of_use.html
+_initBlocks("""
+# Blocks-18.0.0.txt
+# Date: 2026-07-08
+# © 2026 Unicode®, Inc.
+# Unicode and the Unicode Logo are registered trademarks of Unicode, Inc. in the U.S. and other countries.
+# For terms of use and license, see https://www.unicode.org/terms_of_use.html
 #
 # Unicode Character Database
-# For documentation, see http://www.unicode.org/reports/tr44/
+# For documentation, see https://www.unicode.org/reports/tr44/
 #
 # Format:
 # Start Code..End Code; Block Name
@@ -98,7 +93,7 @@ _initBlocks('''
 #         and underbars are ignored.
 #         For example, "Latin Extended-A" and "latin extended a" are equivalent.
 #         For more information on the comparison of property values,
-#            see UAX #44: http://www.unicode.org/reports/tr44/
+#            see UAX #44: https://www.unicode.org/reports/tr44/
 #
 #  All block ranges start with a value where (cp MOD 16) = 0,
 #  and end with a value where (cp MOD 16) = 15. In other words,
@@ -135,6 +130,7 @@ _initBlocks('''
 0800..083F; Samaritan
 0840..085F; Mandaic
 0860..086F; Syriac Supplement
+0870..089F; Arabic Extended-B
 08A0..08FF; Arabic Extended-A
 0900..097F; Devanagari
 0980..09FF; Bengali
@@ -298,7 +294,10 @@ FFF0..FFFF; Specials
 104B0..104FF; Osage
 10500..1052F; Elbasan
 10530..1056F; Caucasian Albanian
+10570..105BF; Vithkuqi
+105C0..105FF; Todhri
 10600..1077F; Linear A
+10780..107BF; Latin Extended-F
 10800..1083F; Cypriot Syllabary
 10840..1085F; Imperial Aramaic
 10860..1087F; Palmyrene
@@ -306,6 +305,7 @@ FFF0..FFFF; Specials
 108E0..108FF; Hatran
 10900..1091F; Phoenician
 10920..1093F; Lydian
+10940..1095F; Sidetic
 10980..1099F; Meroitic Hieroglyphs
 109A0..109FF; Meroitic Cursive
 10A00..10A5F; Kharoshthi
@@ -319,10 +319,13 @@ FFF0..FFFF; Specials
 10C00..10C4F; Old Turkic
 10C80..10CFF; Old Hungarian
 10D00..10D3F; Hanifi Rohingya
+10D40..10D8F; Garay
 10E60..10E7F; Rumi Numeral Symbols
 10E80..10EBF; Yezidi
+10EC0..10EFF; Arabic Extended-C
 10F00..10F2F; Old Sogdian
 10F30..10F6F; Sogdian
+10F70..10FAF; Old Uyghur
 10FB0..10FDF; Chorasmian
 10FE0..10FFF; Elymaic
 11000..1107F; Brahmi
@@ -336,61 +339,94 @@ FFF0..FFFF; Specials
 11280..112AF; Multani
 112B0..112FF; Khudawadi
 11300..1137F; Grantha
+11380..113FF; Tulu-Tigalari
 11400..1147F; Newa
 11480..114DF; Tirhuta
 11580..115FF; Siddham
 11600..1165F; Modi
 11660..1167F; Mongolian Supplement
 11680..116CF; Takri
-11700..1173F; Ahom
+116D0..116FF; Myanmar Extended-C
+11700..1174F; Ahom
 11800..1184F; Dogra
 118A0..118FF; Warang Citi
 11900..1195F; Dives Akuru
 119A0..119FF; Nandinagari
 11A00..11A4F; Zanabazar Square
 11A50..11AAF; Soyombo
+11AB0..11ABF; Unified Canadian Aboriginal Syllabics Extended-A
 11AC0..11AFF; Pau Cin Hau
+11B00..11B5F; Devanagari Extended-A
+11B60..11B7F; Sharada Supplement
+11BC0..11BFF; Sunuwar
 11C00..11C6F; Bhaiksuki
 11C70..11CBF; Marchen
 11D00..11D5F; Masaram Gondi
 11D60..11DAF; Gunjala Gondi
+11DB0..11DEF; Tolong Siki
+11DF0..11DFF; Bengali Supplement
 11EE0..11EFF; Makasar
+11F00..11F5F; Kawi
 11FB0..11FBF; Lisu Supplement
 11FC0..11FFF; Tamil Supplement
 12000..123FF; Cuneiform
 12400..1247F; Cuneiform Numbers and Punctuation
 12480..1254F; Early Dynastic Cuneiform
+12550..1268F; Archaic Cuneiform Numerals
+12F90..12FFF; Cypro-Minoan
 13000..1342F; Egyptian Hieroglyphs
-13430..1343F; Egyptian Hieroglyph Format Controls
+13430..1345F; Egyptian Hieroglyph Format Controls
+13460..143FF; Egyptian Hieroglyphs Extended-A
 14400..1467F; Anatolian Hieroglyphs
+16100..1613F; Gurung Khema
 16800..16A3F; Bamum Supplement
 16A40..16A6F; Mro
+16A70..16ACF; Tangsa
 16AD0..16AFF; Bassa Vah
 16B00..16B8F; Pahawh Hmong
+16D40..16D7F; Kirat Rai
 16E40..16E9F; Medefaidrin
+16EA0..16EDF; Beria Erfe
 16F00..16F9F; Miao
 16FE0..16FFF; Ideographic Symbols and Punctuation
 17000..187FF; Tangut
 18800..18AFF; Tangut Components
 18B00..18CFF; Khitan Small Script
-18D00..18D8F; Tangut Supplement
+18D00..18D7F; Tangut Supplement
+18D80..18DFF; Tangut Components Supplement
+18E00..1919F; Jurchen
+191A0..191DF; Jurchen Radicals
+1AFF0..1AFFF; Kana Extended-B
 1B000..1B0FF; Kana Supplement
 1B100..1B12F; Kana Extended-A
 1B130..1B16F; Small Kana Extension
 1B170..1B2FF; Nushu
 1BC00..1BC9F; Duployan
 1BCA0..1BCAF; Shorthand Format Controls
+1CC00..1CEBF; Symbols for Legacy Computing Supplement
+1CEC0..1CEFF; Miscellaneous Symbols Supplement
+1CF00..1CFCF; Znamenny Musical Notation
 1D000..1D0FF; Byzantine Musical Symbols
 1D100..1D1FF; Musical Symbols
 1D200..1D24F; Ancient Greek Musical Notation
+1D250..1D28F; Musical Symbols Supplement
+1D2C0..1D2DF; Kaktovik Numerals
 1D2E0..1D2FF; Mayan Numerals
 1D300..1D35F; Tai Xuan Jing Symbols
 1D360..1D37F; Counting Rod Numerals
 1D400..1D7FF; Mathematical Alphanumeric Symbols
 1D800..1DAAF; Sutton SignWriting
+1DB00..1DBFF; Miscellaneous Symbols and Arrows Extended
+1DF00..1DFFF; Latin Extended-G
 1E000..1E02F; Glagolitic Supplement
+1E030..1E08F; Cyrillic Extended-D
 1E100..1E14F; Nyiakeng Puachue Hmong
+1E290..1E2BF; Toto
 1E2C0..1E2FF; Wancho
+1E4D0..1E4FF; Nag Mundari
+1E5D0..1E5FF; Ol Onal
+1E6C0..1E6FF; Tai Yo
+1E7E0..1E7FF; Ethiopic Extended-B
 1E800..1E8DF; Mende Kikakui
 1E900..1E95F; Adlam
 1EC70..1ECBF; Indic Siyaq Numbers
@@ -417,18 +453,23 @@ FFF0..FFFF; Specials
 2B740..2B81F; CJK Unified Ideographs Extension D
 2B820..2CEAF; CJK Unified Ideographs Extension E
 2CEB0..2EBEF; CJK Unified Ideographs Extension F
+2EBF0..2EE5F; CJK Unified Ideographs Extension I
 2F800..2FA1F; CJK Compatibility Ideographs Supplement
 30000..3134F; CJK Unified Ideographs Extension G
+31350..323AF; CJK Unified Ideographs Extension H
+323B0..3347F; CJK Unified Ideographs Extension J
+3D000..3FC3F; Seal
 E0000..E007F; Tags
 E0100..E01EF; Variation Selectors Supplement
 F0000..FFFFF; Supplementary Private Use Area-A
 100000..10FFFF; Supplementary Private Use Area-B
-# EOF''')
 
-if __name__ == '__main__':
-    print(indexfromname("Private Use Area"));
-    print(block('a'))
+# EOF""")
+
+if __name__ == "__main__":
+    print(indexfromname("Private Use Area"))
+    print(block("a"))
     print(block(chr(0xE000)))
     print(block(chr(0xF8FF)))
     print(block(chr(0x10000)))
-    print(block(chr(0x10ffff)))
+    print(block(chr(0x10FFFF)))

@@ -1,32 +1,26 @@
-#!/usr/bin/python
-#-*- coding: UTF-8 -*-
 # File: views.py
-# Copyright (C) 2013-2020 Peter Murphy <peterkmurphy@gmail.com>
+# Copyright (c) 2011-2026 Peter Murphy <peterkmurphy@gmail.com>
 #
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# Redistribution and use permitted under the BSD-3-Clause terms in LICENSE.txt.
 
-import os, fnmatch;
-import urllib.parse;
-from django.template import Context, RequestContext, loader
-from django.http import HttpResponse, Http404, HttpResponseRedirect;
-from django.template.response import TemplateResponse;
-from django.shortcuts import render_to_response;
+import fnmatch
+import os
+import random
+import urllib.parse
+
 from django.conf import settings
-from .glyphviewer import glyphCatcher, glyphArray, GC_ERRORMSG;
-import random;
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden
 from django.shortcuts import render
-#from theproject.settings import STATIC_URL
+from django.urls import reverse
+
+from .font_fetch import (
+    FontFetchError,
+    FontTimeoutError,
+    FontTooLargeError,
+    UnsafeFontURLError,
+    fetch_remote_font,
+)
+from .glyphviewer import FONT_MAX_SIZE, FONT_TIMEOUT, GC_ERRORMSG, glyphCatcher
 
 FONTS_DIR_ADD = "glyphviewer/fonts/";
 FIND_LOCAL_NAME = 0;
@@ -48,14 +42,17 @@ def getLocalFontFiles():
         if there are any fonts to be found. This saves us reinitialising the
         same array.
     '''
-    global localfontfiles;
-    global fontnametodirectory;
     global localfontempty;
     if localfontfiles != []:
         localfontempty = False;
         return (localfontfiles, fontnametodirectory,);
-    for i in [settings.STATIC_ROOT]:
-        font_dir = os.path.join(i, FONTS_DIR_ADD);
+    search_dirs = []
+    if settings.STATIC_ROOT:
+        search_dirs.append(os.path.join(settings.STATIC_ROOT, FONTS_DIR_ADD))
+    search_dirs.append(os.path.join(os.path.dirname(__file__), "static", FONTS_DIR_ADD))
+    for font_dir in search_dirs:
+        if not os.path.isdir(font_dir):
+            continue
         listdir = os.listdir(font_dir);
         filtereddir = [x for x in listdir if fnmatch.fnmatch(x, '*.ttf') or
             fnmatch.fnmatch(x, '*.otf') or fnmatch.fnmatch(x, '*.woff') or
@@ -70,6 +67,75 @@ def getLocalFontFiles():
     else:
         localfontempty = True;
     return (localfontfiles, fontnametodirectory,);
+
+
+def local_font_paths(filename, fontnametodirectory, localfontdir_url):
+    '''Return (filesystem_path, public_url) for a bundled local font.'''
+    if not filename:
+        return "", ""
+    safe_name = os.path.basename(filename)
+    font_dir = fontnametodirectory.get(safe_name)
+    if not font_dir:
+        return "", ""
+    fs_path = os.path.join(font_dir, safe_name)
+    if not os.path.isfile(fs_path):
+        return "", ""
+    font_url = urllib.parse.urljoin(localfontdir_url, safe_name)
+    return fs_path, font_url
+
+
+FONT_CONTENT_TYPES = {
+    ".woff2": "font/woff2",
+    ".woff": "font/woff",
+    ".otf": "font/otf",
+    ".ttf": "font/ttf",
+}
+
+
+def remote_font_display_url(request, remote_url):
+    '''Same-origin URL for @font-face when the source font lacks CORS headers.'''
+    if not remote_url:
+        return ""
+    query = urllib.parse.urlencode({"url": remote_url})
+    proxy_path = reverse("glyphviewer:font-proxy")
+    return request.build_absolute_uri(f"{proxy_path}?{query}")
+
+
+def font_proxy(request):
+    '''Fetch a remote font server-side and serve it to the browser same-origin.'''
+    remote_url = request.GET.get("url", "").strip()
+    if not remote_url:
+        return HttpResponseBadRequest("Missing font URL.")
+    try:
+        temp_path, _headers = fetch_remote_font(
+            remote_url,
+            max_size=FONT_MAX_SIZE,
+            timeout=FONT_TIMEOUT,
+        )
+        try:
+            with open(temp_path, "rb") as font_file:
+                data = font_file.read()
+        finally:
+            os.unlink(temp_path)
+    except UnsafeFontURLError:
+        return HttpResponseForbidden("Font URL not allowed.")
+    except FontTooLargeError:
+        return HttpResponse("Font too large.", status=413)
+    except FontTimeoutError:
+        return HttpResponse("Font request timed out.", status=504)
+    except FontFetchError:
+        return HttpResponseBadRequest("Could not fetch font.")
+
+    lower_url = remote_url.lower()
+    content_type = "application/octet-stream"
+    for ext, mime in FONT_CONTENT_TYPES.items():
+        if lower_url.endswith(ext):
+            content_type = mime
+            break
+
+    response = HttpResponse(data, content_type=content_type)
+    response["Cache-Control"] = "private, max-age=3600"
+    return response
 
 
 def index(request):
@@ -135,14 +201,19 @@ def index(request):
 # "Remote".
 # (ii) 'chosenitem': the value to set the "File" drop down list.
 # (iii) 'remoteurl': the value to set the "URL" text box.
-# (iv) 'fetchpath': the URL which is used to analyse the font (whereever it is).
+# (iv) 'fetchpath': filesystem path or remote URL used to analyse the font.
 # (v) 'displayfont': what font info is actually displayed to the user.
+# (vi) 'fonturl': browser-facing URL for @font-face (local static URL or remote).
+# Preview uses the same-origin font proxy for remote fonts, so bCheckCORS stays
+# False here; glyphCatcher still accepts True for direct/API use and tests.
 
     if locchoice == FIND_LOCAL_NAME:
         is_remote = False;
         chosenitem = fontlocal;
         remoteurl = "";
-        fetchpath = urllib.parse.urljoin(localfontdir_url, fontlocal);
+        fetchpath, fonturl = local_font_paths(
+            fontlocal, fontnametodirectory, localfontdir_url
+        );
         displayfont = fontlocal;
         bCheckCORS = False
     elif locchoice == FIND_REMOTE:
@@ -150,8 +221,9 @@ def index(request):
         chosenitem = "";
         remoteurl = fontremote;
         fetchpath = fontremote;
+        fonturl = remote_font_display_url(request, fontremote);
         displayfont = fontremote;
-        bCheckCORS = True
+        bCheckCORS = False
     else: # locchoice == FIND_LOCAL_RANDOM:
         is_remote = False;
         bCheckCORS = False
@@ -161,7 +233,9 @@ def index(request):
         else:
             chosenitem = "";
         remoteurl = "";
-        fetchpath = urllib.parse.urljoin(localfontdir_url, chosenitem);
+        fetchpath, fonturl = local_font_paths(
+            chosenitem, fontnametodirectory, localfontdir_url
+        );
         displayfont = chosenitem;
 
 # Now we analyse the font!
@@ -183,5 +257,5 @@ def index(request):
         'ourglyphs': ourglyphs,'reslistdir':localfontfiles,
         'chosenitem': chosenitem, 'displayfont': displayfont, 'blocks': blocks,
         'ourerror': ourerror, 'ermsg': GC_ERRORMSG[ourerror],
-        'fontpath': fetchpath, 'shtables': shtables,
+        'fontpath': fonturl, 'shtables': shtables,
         'remoteurl':remoteurl, 'is_remote':is_remote, 'localfontempty': localfontempty});
