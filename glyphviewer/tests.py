@@ -3,6 +3,7 @@
 #
 # Redistribution and use permitted under the BSD-3-Clause terms in LICENSE.txt.
 
+import ipaddress
 import os
 import tempfile
 import urllib.parse
@@ -13,6 +14,7 @@ from unittest.mock import patch
 from django.test import RequestFactory, SimpleTestCase, TestCase
 
 from glyphviewer.font_fetch import (
+    FontFetchError,
     FontTooLargeError,
     UnsafeFontURLError,
     fetch_remote_font,
@@ -55,22 +57,92 @@ class FontFetchValidationTests(SimpleTestCase):
 class FontFetchDownloadTests(SimpleTestCase):
     def test_rejects_responses_larger_than_limit(self):
         class FakeResponse:
+            status = 200
             headers: ClassVar[dict[str, str]] = {"Content-Type": "font/woff2"}
 
             def read(self, size=-1):
                 return b"x" * 1024
 
-            def __enter__(self):
-                return self
-
-            def __exit__(self, exc_type, exc, tb):
-                return False
+        class FakeConn:
+            def close(self):
+                return None
 
         with (
-            patch("glyphviewer.font_fetch.urlopen", return_value=FakeResponse()),
+            patch(
+                "glyphviewer.font_fetch._open_pinned_connection",
+                return_value=(FakeConn(), FakeResponse()),
+            ),
             self.assertRaises(FontTooLargeError),
         ):
             fetch_remote_font("https://example.com/font.woff2", max_size=512, timeout=5)
+
+    def test_rejects_redirect_to_blocked_address(self):
+        class RedirectResponse:
+            status = 302
+            headers: ClassVar[dict[str, str]] = {"Location": "http://127.0.0.1/font.woff2"}
+
+            def read(self, size=-1):
+                return b""
+
+        class FakeConn:
+            def close(self):
+                return None
+
+        with (
+            patch(
+                "glyphviewer.font_fetch._open_pinned_connection",
+                return_value=(FakeConn(), RedirectResponse()),
+            ),
+            self.assertRaises(UnsafeFontURLError),
+        ):
+            fetch_remote_font("https://example.com/font.woff2", max_size=512, timeout=5)
+
+    def test_rejects_too_many_redirects(self):
+        class RedirectResponse:
+            status = 302
+            headers: ClassVar[dict[str, str]] = {
+                "Location": "https://cdn.example.com/font.woff2"
+            }
+
+            def read(self, size=-1):
+                return b""
+
+        class FakeConn:
+            def close(self):
+                return None
+
+        with (
+            patch(
+                "glyphviewer.font_fetch._open_pinned_connection",
+                return_value=(FakeConn(), RedirectResponse()),
+            ),
+            patch("glyphviewer.font_fetch.validate_remote_font_url"),
+            self.assertRaises(UnsafeFontURLError),
+        ):
+            fetch_remote_font("https://example.com/font.woff2", max_size=512, timeout=5)
+
+    def test_connects_to_validated_ip_not_hostname_dns_again(self):
+        seen: dict[str, object] = {}
+
+        def fake_create_connection(address, timeout=None):
+            seen["address"] = address
+            raise OSError("stop after pin check")
+
+        with (
+            patch(
+                "glyphviewer.font_fetch._resolve_host_ips",
+                return_value=[ipaddress.ip_address("93.184.216.34")],
+            ),
+            patch(
+                "glyphviewer.font_fetch.socket.create_connection",
+                side_effect=fake_create_connection,
+            ),
+            self.assertRaises(FontFetchError),
+        ):
+            fetch_remote_font(
+                "https://example.com/font.woff2", max_size=512, timeout=5
+            )
+        self.assertEqual(seen["address"], ("93.184.216.34", 443))
 
 
 class LocalFontViewTests(TestCase):

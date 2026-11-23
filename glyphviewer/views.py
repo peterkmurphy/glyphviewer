@@ -107,7 +107,7 @@ def font_proxy(request):
     if not remote_url:
         return HttpResponseBadRequest("Missing font URL.")
     try:
-        temp_path, _headers = fetch_remote_font(
+        temp_path, headers = fetch_remote_font(
             remote_url,
             max_size=FONT_MAX_SIZE,
             timeout=FONT_TIMEOUT,
@@ -128,13 +128,18 @@ def font_proxy(request):
 
     lower_url = remote_url.lower()
     content_type = "application/octet-stream"
-    for ext, mime in FONT_CONTENT_TYPES.items():
-        if lower_url.endswith(ext):
-            content_type = mime
-            break
+    response_type = (headers.get("content-type") or "").split(";")[0].strip().lower()
+    if response_type.startswith("font/") or response_type in FONT_CONTENT_TYPES.values():
+        content_type = response_type
+    else:
+        for ext, mime in FONT_CONTENT_TYPES.items():
+            if lower_url.endswith(ext):
+                content_type = mime
+                break
 
     response = HttpResponse(data, content_type=content_type)
     response["Cache-Control"] = "private, max-age=3600"
+    response["X-Content-Type-Options"] = "nosniff"
     return response
 
 
